@@ -19,21 +19,7 @@ export default defineConfig({
   build: {
     rollupOptions: {
       output: {
-        manualChunks: (id) => {
-          if (id.includes('node_modules')) {
-            if (id.includes('vue')) {
-              return 'vendor-vue'
-            }
-            if (id.includes('@fortawesome')) {
-              return 'vendor-icons'
-            }
-            if (id.includes('axios')) {
-              return 'vendor-http'
-            }
-            // Don't split TipTap - keep it in main vendor bundle
-            return 'vendor'
-          }
-        }
+        manualChunks: undefined,
       },
     },
     cssCodeSplit: true,
