@@ -24,26 +24,17 @@ export default defineConfig({
             if (id.includes('vue')) {
               return 'vendor-vue'
             }
-            if (id.includes('@tiptap')) {
-              return 'vendor-tiptap'
-            }
             if (id.includes('@fortawesome')) {
               return 'vendor-icons'
             }
             if (id.includes('axios')) {
               return 'vendor-http'
             }
+            // Don't split TipTap - keep it in main vendor bundle
             return 'vendor'
           }
         }
       },
-      external: [],
-      treeshake: {
-        moduleSideEffects: (id) => {
-          // Preserve side effects for TipTap modules
-          return id.includes('@tiptap') || id.includes('prosemirror')
-        }
-      }
     },
     cssCodeSplit: true,
     minify: 'esbuild',
