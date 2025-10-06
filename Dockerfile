@@ -48,6 +48,7 @@ WORKDIR /var/www/backend
 # Copiar .env.example a .env y generar APP_KEY
 RUN cp .env.example .env \
     && php artisan key:generate --force \
+    && mkdir -p storage/app/public \
     && php artisan storage:link \
     && php artisan migrate --force \
     && php artisan config:cache
