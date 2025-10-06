@@ -37,8 +37,10 @@ COPY --chown=www:www ./frontend /var/www/frontend
 WORKDIR /var/www/frontend
 RUN npm install && npm run build
 
-# Mover build de Vue al public de Laravel
-RUN cp -r /var/www/frontend/dist/* /var/www/backend/public/
+# Verificar que el build se generó y mover al public de Laravel
+RUN ls -la /var/www/frontend/dist/ && \
+    cp -r /var/www/frontend/dist/* /var/www/backend/public/ && \
+    ls -la /var/www/backend/public/
 
 # Volver a backend
 WORKDIR /var/www/backend
