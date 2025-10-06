@@ -58,7 +58,15 @@ RUN chown -R www:www /var/www/backend \
     && chmod -R 775 /var/www/backend/storage \
     && chmod -R 775 /var/www/backend/bootstrap/cache \
     && chmod -R 777 /var/www/backend/storage/framework \
-    && chmod -R 777 /var/www/backend/storage/logs
+    && chmod -R 777 /var/www/backend/storage/logs \
+    && chmod -R 777 /var/www/backend/storage/app/public
+
+# Crear y dar permisos a carpetas temporales de Nginx
+RUN mkdir -p /var/lib/nginx/tmp/client_body \
+    && mkdir -p /var/lib/nginx/tmp/proxy \
+    && mkdir -p /var/lib/nginx/tmp/fastcgi \
+    && chown -R www:www /var/lib/nginx \
+    && chmod -R 777 /var/lib/nginx/tmp
 
 # Nginx config
 COPY ./docker/nginx-unified.conf /etc/nginx/nginx.conf
