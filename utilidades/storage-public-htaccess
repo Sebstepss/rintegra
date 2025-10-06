@@ -1,0 +1,23 @@
+RewriteEngine On
+
+# Permitir acceso directo a archivos de medios
+Options +Indexes
+DirectoryIndex disabled
+
+# Headers para archivos estáticos
+<FilesMatch "\.(jpg|jpeg|png|gif|webp|svg|pdf|doc|docx|mp4|avi|mov)$">
+    Header set Cache-Control "max-age=31536000, public"
+    Header set Access-Control-Allow-Origin "*"
+    Allow from all
+    Require all granted
+</FilesMatch>
+
+# Denegar acceso a archivos PHP y otros
+<FilesMatch "\.(php|php3|php4|php5|phtml|pl|py|jsp|asp|sh|cgi)$">
+    Deny from all
+</FilesMatch>
+
+# Permitir solo archivos de medios
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule . - [R=404,L]

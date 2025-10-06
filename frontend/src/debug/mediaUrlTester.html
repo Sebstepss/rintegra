@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug URLs de Imágenes - RIntegra</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #f5f5f5;
+        }
+        .debug-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+        }
+        .test-section h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        .url-test {
+            margin: 10px 0;
+            padding: 10px;
+            background: #f8f9fa;
+            border-left: 4px solid #007bff;
+        }
+        .url-display {
+            font-family: monospace;
+            font-size: 12px;
+            background: #e9ecef;
+            padding: 5px;
+            border-radius: 3px;
+            margin: 5px 0;
+            word-break: break-all;
+        }
+        .image-test {
+            margin: 10px 0;
+            text-align: center;
+        }
+        .image-test img {
+            max-width: 200px;
+            max-height: 150px;
+            border: 2px solid #ddd;
+            border-radius: 4px;
+        }
+        .status {
+            padding: 5px 10px;
+            border-radius: 3px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .status.success { background: #d4edda; color: #155724; }
+        .status.error { background: #f8d7da; color: #721c24; }
+        .status.loading { background: #fff3cd; color: #856404; }
+    </style>
+</head>
+<body>
+    <div class="debug-container">
+        <h1>🔧 Debug URLs de Imágenes - RIntegra</h1>
+        <p>Este archivo prueba diferentes formas de cargar imágenes en el entorno local XAMPP.</p>
+
+        <div class="test-section">
+            <h3>1. URLs Directas a Archivos Mock</h3>
+            <div class="url-test">
+                <div class="url-display">/rintegra/backend/public/storage/mock/test-image.svg</div>
+                <div class="image-test">
+                    <img src="/rintegra/backend/public/storage/mock/test-image.svg" alt="Test Image SVG" 
+                         onload="setStatus(this.nextElementSibling, 'success', '✅ Cargado')"
+                         onerror="setStatus(this.nextElementSibling, 'error', '❌ Error')">
+                    <div class="status loading">⏳ Cargando...</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h3>2. URLs con Diferentes Enfoques</h3>
+            
+            <!-- Ruta relativa -->
+            <div class="url-test">
+                <strong>Ruta Relativa:</strong>
+                <div class="url-display">../backend/public/storage/mock/test-image.svg</div>
+                <div class="image-test">
+                    <img src="../backend/public/storage/mock/test-image.svg" alt="Relative Path" 
+                         onload="setStatus(this.nextElementSibling, 'success', '✅ Cargado')"
+                         onerror="setStatus(this.nextElementSibling, 'error', '❌ Error')">
+                    <div class="status loading">⏳ Cargando...</div>
+                </div>
+            </div>
+
+            <!-- Ruta absoluta local -->
+            <div class="url-test">
+                <strong>Ruta Absoluta Local:</strong>
+                <div class="url-display">file:///D:/xampp/htdocs/rintegra/backend/public/storage/mock/test-image.svg</div>
+                <div class="image-test">
+                    <img src="file:///D:/xampp/htdocs/rintegra/backend/public/storage/mock/test-image.svg" alt="File Path" 
+                         onload="setStatus(this.nextElementSibling, 'success', '✅ Cargado')"
+                         onerror="setStatus(this.nextElementSibling, 'error', '❌ Error')">
+                    <div class="status loading">⏳ Cargando...</div>
+                </div>
+            </div>
+
+            <!-- Via localhost -->
+            <div class="url-test">
+                <strong>Via Localhost:</strong>
+                <div class="url-display">http://localhost/rintegra/backend/public/storage/mock/test-image.svg</div>
+                <div class="image-test">
+                    <img src="http://localhost/rintegra/backend/public/storage/mock/test-image.svg" alt="Localhost" 
+                         onload="setStatus(this.nextElementSibling, 'success', '✅ Cargado')"
+                         onerror="setStatus(this.nextElementSibling, 'error', '❌ Error')">
+                    <div class="status loading">⏳ Cargando...</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h3>3. Prueba de Imagen Real Subida</h3>
+            <p>Si has subido una imagen, prueba estas URLs (reemplaza el nombre del archivo):</p>
+            
+            <div class="url-test">
+                <strong>Imagen de Debug SVG:</strong>
+                <div class="url-display">http://localhost/rintegra/backend/public/storage/debug-simple.svg</div>
+                <div class="image-test">
+                    <img src="http://localhost/rintegra/backend/public/storage/debug-simple.svg" alt="Debug SVG" 
+                         onload="setStatus(this.nextElementSibling, 'success', '✅ Cargado')"
+                         onerror="setStatus(this.nextElementSibling, 'error', '❌ Error')">
+                    <div class="status loading">⏳ Cargando...</div>
+                </div>
+            </div>
+
+            <div class="url-test">
+                <strong>✨ IMAGEN REAL SUBIDA 1:</strong>
+                <div class="url-display">http://localhost/rintegra/backend/public/storage/image/2025/07/51bb1c4c-02bc-406b-a5a3-f659b585e091.png</div>
+                <div class="image-test">
+                    <img src="http://localhost/rintegra/backend/public/storage/image/2025/07/51bb1c4c-02bc-406b-a5a3-f659b585e091.png" alt="Real Image 1" 
+                         onload="setStatus(this.nextElementSibling, 'success', '✅ Cargado')"
+                         onerror="setStatus(this.nextElementSibling, 'error', '❌ Error')">
+                    <div class="status loading">⏳ Cargando...</div>
+                </div>
+            </div>
+
+            <div class="url-test">
+                <strong>✨ IMAGEN REAL SUBIDA 2:</strong>
+                <div class="url-display">http://localhost/rintegra/backend/public/storage/image/2025/07/85806947-c160-45a0-bbbb-ba9d52f7226a.png</div>
+                <div class="image-test">
+                    <img src="http://localhost/rintegra/backend/public/storage/image/2025/07/85806947-c160-45a0-bbbb-ba9d52f7226a.png" alt="Real Image 2" 
+                         onload="setStatus(this.nextElementSibling, 'success', '✅ Cargado')"
+                         onerror="setStatus(this.nextElementSibling, 'error', '❌ Error')">
+                    <div class="status loading">⏳ Cargando...</div>
+                </div>
+            </div>
+
+            <div class="url-test">
+                <strong>Test directo archivo Mock:</strong>
+                <div class="url-display">http://localhost/rintegra/backend/public/storage/mock/test-image.svg</div>
+                <div class="image-test">
+                    <img src="http://localhost/rintegra/backend/public/storage/mock/test-image.svg" alt="Mock Test" 
+                         onload="setStatus(this.nextElementSibling, 'success', '✅ Cargado')"
+                         onerror="setStatus(this.nextElementSibling, 'error', '❌ Error')">
+                    <div class="status loading">⏳ Cargando...</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h3>4. Información del Sistema</h3>
+            <div id="system-info">
+                <p><strong>URL actual:</strong> <span id="current-url"></span></p>
+                <p><strong>Protocolo:</strong> <span id="protocol"></span></p>
+                <p><strong>Host:</strong> <span id="host"></span></p>
+                <p><strong>Base URL:</strong> <span id="base-url"></span></p>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h3>5. Test JavaScript URL Builder</h3>
+            <div id="js-test">
+                <button onclick="testUrlBuilder()">Probar Constructor de URLs</button>
+                <div id="js-results"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Función para cambiar status de imágenes
+        function setStatus(element, type, text) {
+            element.className = 'status ' + type;
+            element.textContent = text;
+        }
+
+        // Mostrar información del sistema
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('current-url').textContent = window.location.href;
+            document.getElementById('protocol').textContent = window.location.protocol;
+            document.getElementById('host').textContent = window.location.host;
+            document.getElementById('base-url').textContent = window.location.origin;
+        });
+
+        // Simular la función de construcción de URLs del frontend (ACTUALIZADA)
+        function buildMediaUrl(mediaUrl) {
+            console.log('Original URL:', mediaUrl);
+            
+            if (!mediaUrl) return '';
+            
+            // Si es una URL completa, devolverla tal cual
+            if (mediaUrl.startsWith('http://') || mediaUrl.startsWith('https://')) {
+                console.log('URL completa detectada:', mediaUrl);
+                return mediaUrl;
+            }
+            
+            // Para URLs del backend Laravel, construir URL completa con localhost
+            if (mediaUrl.includes('/storage/')) {
+                const storagePath = mediaUrl.split('/storage/')[1];
+                const fullUrl = `http://localhost/rintegra/backend/public/storage/${storagePath}`;
+                console.log('URL completa construida:', fullUrl);
+                return fullUrl;
+            }
+            
+            // Para URLs relativas, construir URL completa
+            const url = mediaUrl.startsWith('/') ? mediaUrl : `/${mediaUrl}`;
+            const finalUrl = `http://localhost/rintegra/backend/public${url}`;
+            
+            console.log('URL completa final:', finalUrl);
+            return finalUrl;
+        }
+
+        function testUrlBuilder() {
+            const testUrls = [
+                '/storage/mock/test-image.svg',
+                '/storage/image/2025/07/51bb1c4c-02bc-406b-a5a3-f659b585e091.png',
+                'http://localhost/rintegra/backend/public/storage/mock/test-image.svg',
+                'storage/mock/test-image.svg'
+            ];
+
+            let resultsHTML = '<h4>Resultados del Constructor de URLs:</h4>';
+            
+            testUrls.forEach(testUrl => {
+                const result = buildMediaUrl(testUrl);
+                resultsHTML += `
+                    <div class="url-test">
+                        <strong>Input:</strong> <code>${testUrl}</code><br>
+                        <strong>Output:</strong> <code>${result}</code><br>
+                        <button onclick="testImageLoad('${result}')">Probar Carga</button>
+                    </div>
+                `;
+            });
+
+            document.getElementById('js-results').innerHTML = resultsHTML;
+        }
+
+        function testImageLoad(url) {
+            const img = new Image();
+            img.onload = function() {
+                alert(`✅ Imagen cargada correctamente: ${url}`);
+            };
+            img.onerror = function() {
+                alert(`❌ Error cargando imagen: ${url}`);
+            };
+            img.src = url;
+        }
+
+        // Log de debugging inicial
+        console.log('🔧 Debug Media URLs - Sistema iniciado');
+        console.log('Ubicación actual:', window.location.href);
+        console.log('Base URL:', window.location.origin);
+    </script>
+</body>
+</html>

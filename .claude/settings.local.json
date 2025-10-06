@@ -1,0 +1,53 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mkdir:*)",
+      "Bash(composer create-project:*)",
+      "Bash(php artisan make:migration:*)",
+      "Bash(npm create:*)",
+      "Bash(rm:*)",
+      "Bash(php artisan make:model:*)",
+      "Bash(php artisan make:controller:*)",
+      "Bash(php artisan config:publish:*)",
+      "Bash(php artisan migrate:*)",
+      "Bash(php artisan tinker:*)",
+      "Bash(composer:*)",
+      "Bash(php artisan vendor:publish:*)",
+      "Bash(php artisan config:clear:*)",
+      "Bash(php artisan:*)",
+      "Bash(touch:*)",
+      "Bash(php:*)",
+      "Bash(mv:*)",
+      "Bash(npm install:*)",
+      "Bash(del:*)",
+      "Bash(npm uninstall:*)",
+      "Bash(npm run build:*)",
+      "Bash(tasklist:*)",
+      "Bash(dir:*)",
+      "Bash(mysqld:*)",
+      "Bash(\"D:\\xampp\\mysql_start.bat\")",
+      "Bash(rd:*)",
+      "Bash(find:*)",
+      "Bash(curl:*)",
+      "Bash(npm run dev:*)",
+      "mcp__ide__getDiagnostics",
+      "Bash(ls:*)",
+      "Bash(apache_start.bat)",
+      "Bash(\"D:\\xampp\\apache_start.bat\")",
+      "Bash(mysql:*)",
+      "Bash(\"D:\\xampp\\mysql\\bin\\mysql.exe\" --version)",
+      "Bash(grep:*)",
+      "Bash(cp:*)",
+      "Bash(npm init:*)",
+      "Bash(npx create-nuxt:*)",
+      "Bash(npx nuxt:*)",
+      "Bash(ln:*)",
+      "Bash(cat:*)",
+      "Bash(chmod:*)"
+    ],
+    "deny": [],
+    "additionalDirectories": [
+      "D:\\d\\xampp\\htdocs\\rintegra"
+    ]
+  }
+}

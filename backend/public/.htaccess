@@ -1,0 +1,33 @@
+<IfModule mod_rewrite.c>
+    <IfModule mod_negotiation.c>
+        Options -MultiViews -Indexes
+    </IfModule>
+
+    RewriteEngine On
+
+    # Handle Authorization Header
+    RewriteCond %{HTTP:Authorization} .
+    RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+    # Servir archivos HTML estáticos primero si existen
+    RewriteCond %{REQUEST_METHOD} GET
+    RewriteCond %{REQUEST_URI} ^/([^/]*?)/?$
+    RewriteCond %{DOCUMENT_ROOT}/static/%1.html -f
+    RewriteRule ^([^/]*?)/?$ /static/$1.html [L]
+
+    # Servir index.html para la raíz si existe
+    RewriteCond %{REQUEST_METHOD} GET
+    RewriteCond %{REQUEST_URI} ^/?$
+    RewriteCond %{DOCUMENT_ROOT}/static/index.html -f
+    RewriteRule ^/?$ /static/index.html [L]
+
+    # Redirect Trailing Slashes If Not A Folder...
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_URI} (.+)/$
+    RewriteRule ^ %1 [L,R=301]
+
+    # Send Requests To Front Controller...
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule ^ index.php [L]
+</IfModule>
