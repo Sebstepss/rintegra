@@ -43,8 +43,10 @@ RUN cp -r /var/www/frontend/dist/* /var/www/backend/public/
 # Volver a backend
 WORKDIR /var/www/backend
 
-# Copiar .env.example a .env
-RUN cp .env.example .env
+# Copiar .env.example a .env y generar APP_KEY
+RUN cp .env.example .env \
+    && php artisan key:generate --force \
+    && php artisan config:cache
 
 # Permisos
 RUN chown -R www:www /var/www/backend \
