@@ -52,6 +52,10 @@ export default defineConfig({
         drop_console: true,
         drop_debugger: true,
         pure_funcs: ['console.log', 'console.info', 'console.debug'],
+        toplevel: false,
+      },
+      mangle: {
+        safari10: true,
       },
       format: {
         comments: false,
