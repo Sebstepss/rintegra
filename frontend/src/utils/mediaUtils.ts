@@ -18,13 +18,13 @@ export function buildMediaUrl(url: string): string {
   // Para URLs de storage (imágenes y archivos)
   if (url.includes('/storage/')) {
     const storagePath = url.split('/storage/')[1]
-    
+
     if (import.meta.env.DEV) {
       // Local: storage está dentro del backend Laravel
       return `http://localhost/rintegra/backend/public/storage/${storagePath}`
     } else {
-      // Producción: acceso directo a la carpeta storage del API
-      return `https://r-integra.com/api/storage/app/public/${storagePath}`
+      // Producción: usar symlink de storage
+      return `https://r-integra.com/storage/${storagePath}`
     }
   }
   
