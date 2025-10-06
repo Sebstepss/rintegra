@@ -49,6 +49,7 @@ WORKDIR /var/www/backend
 RUN cp .env.example .env \
     && php artisan key:generate --force \
     && php artisan storage:link \
+    && php artisan migrate --force \
     && php artisan config:cache
 
 # Permisos
