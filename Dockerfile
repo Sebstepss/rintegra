@@ -43,6 +43,9 @@ RUN cp -r /var/www/frontend/dist/* /var/www/backend/public/
 # Volver a backend
 WORKDIR /var/www/backend
 
+# Copiar .env.example a .env
+RUN cp .env.example .env
+
 # Permisos
 RUN chown -R www:www /var/www/backend \
     && chmod -R 755 /var/www/backend/storage \
