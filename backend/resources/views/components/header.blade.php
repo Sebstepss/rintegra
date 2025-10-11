@@ -2,7 +2,7 @@
     // Obtener configuración del header desde la base de datos
     $headerConfig = null;
     try {
-        $config = \App\Models\Config::where('type', 'header')
+        $config = \App\Models\SiteConfiguration::where('config_type', 'header')
             ->where('is_active', true)
             ->first();
         if ($config && isset($config->config_data)) {
@@ -20,12 +20,11 @@
 
     // Obtener páginas de navegación
     $navigationPages = \App\Models\Page::with(['publishedChildren' => function($query) {
-            $query->orderBy('menu_order');
+            $query->orderBy('sort_order');
         }])
         ->where('status', 'published')
-        ->where('show_in_nav', true)
         ->whereNull('parent_id')
-        ->orderBy('menu_order')
+        ->orderBy('sort_order')
         ->get();
 @endphp
 

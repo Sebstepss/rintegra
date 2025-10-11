@@ -2,7 +2,7 @@
     // Obtener configuración del footer desde la base de datos
     $footerConfig = null;
     try {
-        $config = \App\Models\Config::where('type', 'footer')
+        $config = \App\Models\SiteConfiguration::where('config_type', 'footer')
             ->where('is_active', true)
             ->first();
         if ($config && isset($config->config_data)) {
