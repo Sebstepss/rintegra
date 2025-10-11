@@ -1,11 +1,10 @@
-@extends('layouts.app')
+@extends('layouts.public')
 
 @section('title', $page->meta_description ?? $page->title)
 @section('description', $page->meta_description ?? '')
 
 @section('content')
 <div class="page-container">
-    {{-- Page Content Blocks from pagecontent JSON --}}
     <div class="page-content">
         @php
             $blocks = collect($page->pagecontent ?? [])->sortBy('order');
@@ -13,14 +12,7 @@
 
         @forelse($blocks as $block)
             @if(isset($block['type']))
-                <div class="content-block block-{{ $block['type'] }}"
-                     @if(isset($block['customId'])) id="{{ $block['customId'] }}" @endif
-                     @if(isset($block['customClass'])) class="content-block block-{{ $block['type'] }} {{ $block['customClass'] }}" @endif>
-
-                    @if(isset($block['customCSS']) && $block['customCSS'])
-                        <style>{{ $block['customCSS'] }}</style>
-                    @endif
-
+                <div class="content-block block-{{ $block['type'] }}">
                     @switch($block['type'])
                         @case('text')
                             @include('components.blocks.text-block', ['block' => $block])
@@ -35,15 +27,15 @@
                             @include('components.blocks.textoy-video-block', ['block' => $block])
                             @break
                         @default
-                            <div class="unknown-block">
-                                <p>Tipo de bloque no reconocido: {{ $block['type'] }}</p>
+                            <div style="padding: 20px; background: #f0f0f0; margin: 10px 0;">
+                                <p>Bloque tipo: {{ $block['type'] }}</p>
                             </div>
                     @endswitch
                 </div>
             @endif
         @empty
-            <div class="no-content">
-                <p>Esta página no tiene contenido configurado.</p>
+            <div style="padding: 40px; text-align: center;">
+                <p>Esta página no tiene contenido.</p>
             </div>
         @endforelse
     </div>
