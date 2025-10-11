@@ -49,10 +49,74 @@
     @endif
 
     <div class="container-inner" style="position: relative; z-index: 1; max-width: 1400px; margin: 0 auto;">
-        <slot>
-            <!-- El contenido interno se renderiza aquí -->
-            <!-- En el contexto de página, los bloques internos se procesan por el sistema de bloques principal -->
-        </slot>
+        @if(isset($block['children']) && is_array($block['children']) && count($block['children']) > 0)
+            <div class="container-children">
+                @foreach($block['children'] as $childBlock)
+                    @if(isset($childBlock['type']))
+                        @switch($childBlock['type'])
+                            @case('text')
+                                @include('components.blocks.text-block', ['block' => $childBlock])
+                                @break
+
+                            @case('banner-integra')
+                                @include('components.blocks.banner-integra-block', ['block' => $childBlock])
+                                @break
+
+                            @case('cualidades')
+                                @include('components.blocks.cualidades-block', ['block' => $childBlock])
+                                @break
+
+                            @case('textoy-video')
+                                @include('components.blocks.textoy-video-block', ['block' => $childBlock])
+                                @break
+
+                            @case('spacer')
+                                @include('components.blocks.spacer-block', ['block' => $childBlock])
+                                @break
+
+                            @case('image')
+                                @include('components.blocks.image-block', ['block' => $childBlock])
+                                @break
+
+                            @case('services')
+                                @include('components.blocks.services-block', ['block' => $childBlock])
+                                @break
+
+                            @case('team')
+                                @include('components.blocks.team-block', ['block' => $childBlock])
+                                @break
+
+                            @case('image-gallery')
+                                @include('components.blocks.image-gallery-block', ['block' => $childBlock])
+                                @break
+
+                            @case('map')
+                                @include('components.blocks.map-block', ['block' => $childBlock])
+                                @break
+
+                            @case('lead-converter')
+                                @include('components.blocks.lead-converter-block', ['block' => $childBlock])
+                                @break
+
+                            @default
+                                <div style="padding: 20px; background: #fff3cd; border: 2px dashed #ffc107; margin: 10px 0; border-radius: 8px;">
+                                    <p style="margin: 0; color: #856404;">
+                                        <strong>⚠️ Bloque hijo no implementado:</strong> {{ $childBlock['type'] }}
+                                    </p>
+                                </div>
+                        @endswitch
+                    @endif
+                @endforeach
+            </div>
+        @else
+            <div style="min-height: 200px; display: flex; align-items: center; justify-content: center; color: #6c757d;">
+                <div style="text-align: center; padding: 2rem;">
+                    <i class="fas fa-cube" style="font-size: 3rem; opacity: 0.5; display: block; margin-bottom: 1rem;"></i>
+                    <h4 style="margin: 0 0 0.5rem 0; color: #495057;">Contenedor Vacío</h4>
+                    <p style="margin: 0;">Este contenedor no tiene bloques</p>
+                </div>
+            </div>
+        @endif
     </div>
 </div>
 
