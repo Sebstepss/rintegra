@@ -32,7 +32,7 @@
     <nav class="navbar">
         <div class="nav-container">
             <div class="nav-brand">
-                <a href="/" class="brand-link">
+                <a href="{{ url('/') }}" class="brand-link">
                     @if($logoUrl)
                         <img src="{{ $logoUrl }}" alt="Logo" class="logo-image">
                     @else
@@ -44,7 +44,7 @@
             <div class="nav-menu" id="navMenu">
                 @foreach($navigationPages as $page)
                     <div class="nav-item-wrapper {{ $page->publishedChildren->count() > 0 ? 'has-dropdown' : '' }}">
-                        <a href="/{{ $page->slug }}"
+                        <a href="{{ url('/' . $page->slug) }}"
                            class="nav-link {{ $page->featured ? 'featured-link' : '' }} {{ $page->publishedChildren->count() > 0 ? 'has-children' : '' }}"
                            style="color: {{ $page->featured ? '#0C6444' : $textColor }};">
                             {{ $page->title }}
@@ -56,7 +56,7 @@
                         @if($page->publishedChildren->count() > 0)
                             <div class="dropdown-menu">
                                 @foreach($page->publishedChildren as $child)
-                                    <a href="/{{ $child->slug }}"
+                                    <a href="{{ url('/' . $child->slug) }}"
                                        class="nav-link dropdown-link {{ $child->featured ? 'featured-link' : '' }}"
                                        style="color: {{ $child->featured ? '#0C6444' : '#2c3e50' }};">
                                         {{ $child->title }}
