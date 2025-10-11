@@ -1,88 +1,42 @@
 @extends('layouts.app')
 
-@section('title', $page->seo_title ?? $page->title)
-@section('description', $page->seo_description ?? '')
+@section('title', $page->meta_description ?? $page->title)
+@section('description', $page->meta_description ?? '')
 
 @section('content')
 <div class="page-container">
-    {{-- Featured Image --}}
-    @if($page->featured_image)
-        <div class="page-featured-image">
-            <img src="{{ asset('storage/' . $page->featured_image) }}" 
-                 alt="{{ $page->title }}"
-                 loading="lazy">
-        </div>
-    @endif
-    
-    {{-- Page Title --}}
-    @if(!$page->is_main_page)
-        <header class="page-header">
-            <h1 class="page-title">{{ $page->title }}</h1>
-        </header>
-    @endif
-    
-    {{-- Page Content Blocks --}}
+    {{-- Page Content Blocks from pagecontent JSON --}}
     <div class="page-content">
-        @forelse($page->contents as $content)
-            @php
-                $blockData = json_decode($content->content, true);
-            @endphp
-            
-            @if($blockData && isset($blockData['type']))
-                <div class="content-block block-{{ $blockData['type'] }}">
-                    @switch($blockData['type'])
+        @php
+            $blocks = collect($page->pagecontent ?? [])->sortBy('order');
+        @endphp
+
+        @forelse($blocks as $block)
+            @if(isset($block['type']))
+                <div class="content-block block-{{ $block['type'] }}"
+                     @if(isset($block['customId'])) id="{{ $block['customId'] }}" @endif
+                     @if(isset($block['customClass'])) class="content-block block-{{ $block['type'] }} {{ $block['customClass'] }}" @endif>
+
+                    @if(isset($block['customCSS']) && $block['customCSS'])
+                        <style>{{ $block['customCSS'] }}</style>
+                    @endif
+
+                    @switch($block['type'])
                         @case('text')
-                            @include('components.blocks.text-block', ['block' => $blockData])
+                            @include('components.blocks.text-block', ['block' => $block])
                             @break
-                            
-                        @case('image')
-                            @include('components.blocks.image-block', ['block' => $blockData])
-                            @break
-                            
-                        @case('container')
-                            @include('components.blocks.container-block', ['block' => $blockData])
-                            @break
-                            
-                        @case('services')
-                            @include('components.blocks.services-block', ['block' => $blockData])
-                            @break
-                            
-                        @case('team')
-                            @include('components.blocks.team-block', ['block' => $blockData])
-                            @break
-                            
-                        @case('image-gallery')
-                            @include('components.blocks.image-gallery-block', ['block' => $blockData])
-                            @break
-                            
-                        @case('map')
-                            @include('components.blocks.map-block', ['block' => $blockData])
-                            @break
-                            
                         @case('banner-integra')
-                            @include('components.blocks.banner-integra-block', ['block' => $blockData])
+                            @include('components.blocks.banner-integra-block', ['block' => $block])
                             @break
-                            
                         @case('cualidades')
-                            @include('components.blocks.cualidades-block', ['block' => $blockData])
+                            @include('components.blocks.cualidades-block', ['block' => $block])
                             @break
-                            
                         @case('textoy-video')
-                            @include('components.blocks.textoy-video-block', ['block' => $blockData])
+                            @include('components.blocks.textoy-video-block', ['block' => $block])
                             @break
-                            
-                        @case('lead-converter')
-                            @include('components.blocks.lead-converter-block', ['block' => $blockData])
-                            @break
-                            
-                        @case('spacer')
-                            @include('components.blocks.spacer-block', ['block' => $blockData])
-                            @break
-                            
                         @default
-                            {{-- Fallback para bloques desconocidos --}}
                             <div class="unknown-block">
-                                <p>Tipo de bloque no reconocido: {{ $blockData['type'] }}</p>
+                                <p>Tipo de bloque no reconocido: {{ $block['type'] }}</p>
                             </div>
                     @endswitch
                 </div>

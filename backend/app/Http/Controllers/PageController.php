@@ -188,4 +188,15 @@ class PageController extends Controller
 
         return $homepage;
     }
+    /**
+     * Mostrar página pública (SSR con Blade)
+     */
+    public function showPublic($slug = 'inicio')
+    {
+        $page = Page::where('slug', $slug)
+            ->where('status', 'published')
+            ->firstOrFail();
+
+        return view('pages.show', compact('page'));
+    }
 }
