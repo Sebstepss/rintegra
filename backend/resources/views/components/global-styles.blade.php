@@ -132,7 +132,7 @@ Color Palette: {{ count($globalsConfig['colorPalette'] ?? []) }} colors
 <style>
     :root {
         /* Fuente base */
-        --base-font-family: {{ $globalsConfig['baseFontFamily'] ?? "'Lato', sans-serif" }};
+        --base-font-family: {!! $globalsConfig['baseFontFamily'] ?? "'Lato', sans-serif" !!};
 
         @foreach(($globalsConfig['typography'] ?? []) as $element => $config)
             @php
@@ -144,7 +144,7 @@ Color Palette: {{ count($globalsConfig['colorPalette'] ?? []) }} colors
                 $letterSpacing = $config['letterSpacing'] ?? 0;
             @endphp
             /* Tipografía {{ $element }} */
-            --font-family-{{ $element }}: {{ $fontFamily }};
+            --font-family-{{ $element }}: {!! $fontFamily !!};
             --font-size-{{ $element }}: {{ $fontSize }}px;
             --font-weight-{{ $element }}: {{ $fontWeight }};
             --letter-spacing-{{ $element }}: {{ $letterSpacing }}px;
