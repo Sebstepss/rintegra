@@ -43,20 +43,59 @@
         $globalsConfig = array_merge($defaultConfig, $globalsConfig);
     }
 
+    // Helper para extraer nombre de fuente Google de la cadena CSS
+    function extractGoogleFont($fontFamilyString) {
+        // Eliminar espacios extra
+        $fontFamilyString = trim($fontFamilyString);
+
+        // Buscar entre comillas simples: 'Lato'
+        if (preg_match("/'([^']+)'/", $fontFamilyString, $matches)) {
+            $fontName = $matches[1];
+        }
+        // Buscar entre comillas dobles: "Lato"
+        elseif (preg_match('/"([^"]+)"/', $fontFamilyString, $matches)) {
+            $fontName = $matches[1];
+        }
+        // Sin comillas, tomar primera palabra antes de coma
+        else {
+            $parts = explode(',', $fontFamilyString);
+            $fontName = trim($parts[0]);
+        }
+
+        // Lista de fuentes de sistema que NO son Google Fonts
+        $systemFonts = [
+            'Arial', 'Helvetica', 'Times New Roman', 'Times', 'Courier New',
+            'Courier', 'Verdana', 'Georgia', 'Palatino', 'Garamond',
+            'Bookman', 'Comic Sans MS', 'Trebuchet MS', 'Impact',
+            'sans-serif', 'serif', 'monospace', 'cursive', 'fantasy',
+            'system-ui', 'inherit'
+        ];
+
+        if (in_array($fontName, $systemFonts)) {
+            return null;
+        }
+
+        return $fontName;
+    }
+
     // Extraer Google Fonts necesarias
     $fontsToLoad = [];
     $baseFontFamily = $globalsConfig['baseFontFamily'] ?? "'Lato', sans-serif";
 
     // Extraer nombre de la fuente base
-    if (preg_match("/'([^']+)'/", $baseFontFamily, $matches)) {
-        $fontsToLoad[] = $matches[1];
+    $baseFont = extractGoogleFont($baseFontFamily);
+    if ($baseFont) {
+        $fontsToLoad[] = $baseFont;
     }
 
     // Extraer fuentes de los elementos de tipografía
     foreach ($globalsConfig['typography'] ?? [] as $config) {
         $fontFamily = $config['fontFamily'] ?? 'inherit';
-        if ($fontFamily !== 'inherit' && preg_match("/'([^']+)'/", $fontFamily, $matches)) {
-            $fontsToLoad[] = $matches[1];
+        if ($fontFamily !== 'inherit') {
+            $font = extractGoogleFont($fontFamily);
+            if ($font) {
+                $fontsToLoad[] = $font;
+            }
         }
     }
 
