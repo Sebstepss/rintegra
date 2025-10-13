@@ -172,7 +172,7 @@
 .footer {
     color: white;
     margin-top: auto;
-    font-family: 'Lato', 'Inter', sans-serif;
+    font-family: var(--base-font-family, 'Lato', 'Inter', sans-serif);
     width: 100%;
 }
 
@@ -202,15 +202,20 @@
 }
 
 .cta-title {
-    font-size: 3rem;
-    font-weight: 700;
+    font-size: var(--font-size-h1, 3rem);
+    font-weight: var(--font-weight-h1, 700);
+    font-family: var(--font-family-h1, var(--base-font-family, 'Lato', sans-serif));
+    letter-spacing: var(--letter-spacing-h1, 0px);
     margin: 0 0 1.5rem 0;
     color: white;
     line-height: 1.2;
 }
 
 .cta-description {
-    font-size: 1.1rem;
+    font-size: var(--font-size-p, 1.1rem);
+    font-weight: var(--font-weight-p, 400);
+    font-family: var(--font-family-p, var(--base-font-family, 'Lato', sans-serif));
+    letter-spacing: var(--letter-spacing-p, 0px);
     line-height: 1.6;
     margin: 0;
     color: rgba(255, 255, 255, 0.9);
@@ -351,16 +356,19 @@
 }
 
 .logo-text {
-    font-size: 2rem;
-    font-weight: 700;
+    font-size: var(--font-size-h2, 2rem);
+    font-weight: var(--font-weight-h2, 700);
+    font-family: var(--font-family-h2, var(--base-font-family, 'Lato', sans-serif));
     color: white;
     margin: 0;
 }
 
 /* Columna Contacto */
 .section-title {
-    font-size: 1.5rem;
-    font-weight: 600;
+    font-size: var(--font-size-h3, 1.5rem);
+    font-weight: var(--font-weight-h3, 600);
+    font-family: var(--font-family-h3, var(--base-font-family, 'Lato', sans-serif));
+    letter-spacing: var(--letter-spacing-h3, 0px);
     margin: 0 0 1.5rem 0;
     color: white;
 }

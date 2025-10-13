@@ -37,14 +37,26 @@
             <div class="banner-content">
                 @if(isset($block['title']) && $block['title'])
                     <h1 class="banner-title"
-                        style="color: {{ $titleColor }}; font-size: 2.5rem; font-weight: 700; margin-bottom: 1rem; line-height: 1.2;">
+                        style="color: {{ $titleColor }};
+                               font-size: var(--font-size-h1, 2.5rem);
+                               font-weight: var(--font-weight-h1, 700);
+                               font-family: var(--font-family-h1, var(--base-font-family, 'Lato', sans-serif));
+                               letter-spacing: var(--letter-spacing-h1, 0px);
+                               margin-bottom: 1rem;
+                               line-height: 1.2;">
                         {{ $block['title'] }}
                     </h1>
                 @endif
 
                 @if(isset($block['description']) && $block['description'])
                     <p class="banner-description"
-                       style="color: {{ $descriptionColor }}; font-size: 1.1rem; line-height: 1.6; margin-bottom: 2rem;">
+                       style="color: {{ $descriptionColor }};
+                              font-size: var(--font-size-p, 1.1rem);
+                              font-weight: var(--font-weight-p, 400);
+                              font-family: var(--font-family-p, var(--base-font-family, 'Lato', sans-serif));
+                              letter-spacing: var(--letter-spacing-p, 0px);
+                              line-height: 1.6;
+                              margin-bottom: 2rem;">
                         {{ $block['description'] }}
                     </p>
                 @endif

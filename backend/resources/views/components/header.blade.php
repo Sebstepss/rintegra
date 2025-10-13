@@ -86,7 +86,7 @@
     width: 100%;
     z-index: 1000;
     transition: all 0.3s ease;
-    font-family: 'Lato', 'Inter', sans-serif;
+    font-family: var(--base-font-family, 'Lato', 'Inter', sans-serif);
 }
 
 .header.sticky {
@@ -126,8 +126,9 @@
 
 .logo-text {
     margin: 0;
-    font-size: 2rem;
-    font-weight: 700;
+    font-size: var(--font-size-h2, 2rem);
+    font-weight: var(--font-weight-h2, 700);
+    font-family: var(--font-family-h2, var(--base-font-family, 'Lato', sans-serif));
     transition: color 0.3s ease;
 }
 
@@ -148,8 +149,9 @@
 
 .nav-link {
     text-decoration: none;
-    font-weight: 500;
-    font-size: 1rem;
+    font-weight: var(--font-weight-p, 500);
+    font-size: var(--font-size-p, 1rem);
+    font-family: var(--font-family-p, var(--base-font-family, 'Lato', sans-serif));
     padding: 0.5rem 1rem;
     border-radius: 6px;
     transition: all 0.3s ease;
