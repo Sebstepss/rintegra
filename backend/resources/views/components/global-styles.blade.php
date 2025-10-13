@@ -36,11 +36,23 @@
         ]
     ];
 
-    // Merge con configuración por defecto
+    // Merge profundo con configuración por defecto
     if (!$globalsConfig) {
         $globalsConfig = $defaultConfig;
     } else {
-        $globalsConfig = array_merge($defaultConfig, $globalsConfig);
+        // Merge profundo para preservar estructuras anidadas
+        $globalsConfig = array_replace_recursive($defaultConfig, $globalsConfig);
+    }
+
+    // Asegurar que existen todas las propiedades necesarias
+    if (!isset($globalsConfig['typography'])) {
+        $globalsConfig['typography'] = $defaultConfig['typography'];
+    }
+    if (!isset($globalsConfig['colorPalette'])) {
+        $globalsConfig['colorPalette'] = $defaultConfig['colorPalette'];
+    }
+    if (!isset($globalsConfig['buttons'])) {
+        $globalsConfig['buttons'] = $defaultConfig['buttons'];
     }
 
     // Helper para extraer nombre de fuente Google de la cadena CSS
@@ -109,46 +121,57 @@
     <link href="https://fonts.googleapis.com/css2?{{ implode('&', array_map(function($font) { return 'family=' . str_replace(' ', '+', $font) . ':wght@100;200;300;400;500;600;700;800;900'; }, $fontsToLoad)) }}&display=swap" rel="stylesheet">
 @endif
 
+{{-- Debug: Mostrar configuración cargada (solo visible en el código fuente) --}}
+<!-- Global Styles Config Loaded:
+Base Font: {{ $globalsConfig['baseFontFamily'] ?? 'NOT SET' }}
+Typography Elements: {{ count($globalsConfig['typography'] ?? []) }}
+Color Palette: {{ count($globalsConfig['colorPalette'] ?? []) }} colors
+-->
+
 {{-- CSS Variables Globales --}}
 <style>
     :root {
         /* Fuente base */
-        --base-font-family: {{ $globalsConfig['baseFontFamily'] }};
+        --base-font-family: {{ $globalsConfig['baseFontFamily'] ?? "'Lato', sans-serif" }};
 
-        @foreach($globalsConfig['typography'] as $element => $config)
+        @foreach(($globalsConfig['typography'] ?? []) as $element => $config)
             @php
-                $fontFamily = $config['fontFamily'] === 'inherit' ? $globalsConfig['baseFontFamily'] : $config['fontFamily'];
-                $fontWeight = $config['fontWeight'] === 'inherit' ? 'normal' : $config['fontWeight'];
+                $fontFamily = ($config['fontFamily'] ?? 'inherit') === 'inherit'
+                    ? ($globalsConfig['baseFontFamily'] ?? "'Lato', sans-serif")
+                    : $config['fontFamily'];
+                $fontWeight = ($config['fontWeight'] ?? 'inherit') === 'inherit' ? 'normal' : $config['fontWeight'];
+                $fontSize = $config['fontSize'] ?? 16;
+                $letterSpacing = $config['letterSpacing'] ?? 0;
             @endphp
             /* Tipografía {{ $element }} */
             --font-family-{{ $element }}: {{ $fontFamily }};
-            --font-size-{{ $element }}: {{ $config['fontSize'] }}px;
+            --font-size-{{ $element }}: {{ $fontSize }}px;
             --font-weight-{{ $element }}: {{ $fontWeight }};
-            --letter-spacing-{{ $element }}: {{ $config['letterSpacing'] }}px;
+            --letter-spacing-{{ $element }}: {{ $letterSpacing }}px;
         @endforeach
 
         /* Paleta de colores */
-        @foreach($globalsConfig['colorPalette'] as $index => $color)
+        @foreach(($globalsConfig['colorPalette'] ?? []) as $index => $color)
             --color-{{ $index + 1 }}: {{ $color }};
         @endforeach
 
         /* Estilos de botones - Outline */
-        --btn-outline-border-color: {{ $globalsConfig['buttons']['outline']['borderColor'] }};
-        --btn-outline-text-color: {{ $globalsConfig['buttons']['outline']['textColor'] }};
-        --btn-outline-border-radius: {{ $globalsConfig['buttons']['outline']['borderRadius'] }}px;
-        --btn-outline-border-width: {{ $globalsConfig['buttons']['outline']['borderWidth'] }}px;
+        --btn-outline-border-color: {{ $globalsConfig['buttons']['outline']['borderColor'] ?? '#007bff' }};
+        --btn-outline-text-color: {{ $globalsConfig['buttons']['outline']['textColor'] ?? '#007bff' }};
+        --btn-outline-border-radius: {{ $globalsConfig['buttons']['outline']['borderRadius'] ?? 8 }}px;
+        --btn-outline-border-width: {{ $globalsConfig['buttons']['outline']['borderWidth'] ?? 2 }}px;
 
         /* Estilos de botones - Flat */
-        --btn-flat-bg-color: {{ $globalsConfig['buttons']['flat']['backgroundColor'] }};
-        --btn-flat-text-color: {{ $globalsConfig['buttons']['flat']['textColor'] }};
-        --btn-flat-border-radius: {{ $globalsConfig['buttons']['flat']['borderRadius'] }}px;
+        --btn-flat-bg-color: {{ $globalsConfig['buttons']['flat']['backgroundColor'] ?? '#007bff' }};
+        --btn-flat-text-color: {{ $globalsConfig['buttons']['flat']['textColor'] ?? '#ffffff' }};
+        --btn-flat-border-radius: {{ $globalsConfig['buttons']['flat']['borderRadius'] ?? 8 }}px;
 
         /* Estilos de botones - Gradient */
-        --btn-gradient-color-1: {{ $globalsConfig['buttons']['gradient']['color1'] }};
-        --btn-gradient-color-2: {{ $globalsConfig['buttons']['gradient']['color2'] }};
-        --btn-gradient-color-3: {{ $globalsConfig['buttons']['gradient']['color3'] }};
-        --btn-gradient-text-color: {{ $globalsConfig['buttons']['gradient']['textColor'] }};
-        --btn-gradient-border-radius: {{ $globalsConfig['buttons']['gradient']['borderRadius'] }}px;
+        --btn-gradient-color-1: {{ $globalsConfig['buttons']['gradient']['color1'] ?? '#007bff' }};
+        --btn-gradient-color-2: {{ $globalsConfig['buttons']['gradient']['color2'] ?? '#0056b3' }};
+        --btn-gradient-color-3: {{ $globalsConfig['buttons']['gradient']['color3'] ?? '#004085' }};
+        --btn-gradient-text-color: {{ $globalsConfig['buttons']['gradient']['textColor'] ?? '#ffffff' }};
+        --btn-gradient-border-radius: {{ $globalsConfig['buttons']['gradient']['borderRadius'] ?? 8 }}px;
     }
 
     /* Aplicar estilos globales base */
