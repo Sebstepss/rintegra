@@ -69,7 +69,7 @@
                         @endforeach
                     @endif
                     
-                    <button type="submit" class="form-submit">
+                    <button type="submit" class="form-submit btn-flat">
                         {{ $block['data']['submit_text'] ?? 'Enviar' }}
                     </button>
                 </form>

@@ -50,10 +50,13 @@
                 @endif
 
                 @if(isset($block['buttonText']) && $block['buttonText'])
-                    <div class="banner-actions">
+                    @php
+                        $buttonStyle = $block['buttonStyle'] ?? 'gradient';
+                        $buttonClass = 'btn-' . $buttonStyle;
+                    @endphp
+                    <div class="banner-actions" style="margin-top: 1rem;">
                         <a href="{{ $block['buttonLink'] ?? '#' }}"
-                           class="banner-button"
-                           style="display: inline-block; background: white; color: #052b1b; padding: 1rem 2rem; border-radius: 50px; text-decoration: none; font-weight: 600; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+                           class="banner-button {{ $buttonClass }}">
                             {{ $block['buttonText'] }}
                         </a>
                     </div>
@@ -74,11 +77,6 @@
 </div>
 
 <style>
-    .banner-button:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(0,0,0,0.3) !important;
-    }
-
     @media (max-width: 768px) {
         .banner-content-wrapper {
             grid-template-columns: 1fr !important;

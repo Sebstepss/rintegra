@@ -22,6 +22,9 @@
     <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
+    {{-- Estilos Globales del Sitio --}}
+    @include('components.global-styles')
+
     <style>
         * {
             margin: 0;
@@ -29,7 +32,7 @@
             box-sizing: border-box;
         }
         body {
-            font-family: 'Lato', 'Inter', sans-serif;
+            font-family: var(--base-font-family, 'Lato', 'Inter', sans-serif);
             line-height: 1.6;
             color: #333;
             padding-top: 70px; /* Space for fixed header */
