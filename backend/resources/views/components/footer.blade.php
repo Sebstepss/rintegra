@@ -496,13 +496,14 @@ document.getElementById('contactForm')?.addEventListener('submit', async functio
         const formData = new FormData(form);
         const data = Object.fromEntries(formData);
 
-        const response = await fetch('/api/forms/contact', {
+        const response = await fetch('/api/forms/submit', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json'
             },
             body: JSON.stringify({
+                form_type: 'contact',
                 name: data.name,
                 phone: data.phone,
                 email: data.email,
