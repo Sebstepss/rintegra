@@ -42,7 +42,11 @@ services:
     labels:
       - "coolify.managed=true"
     healthcheck:
-      disable: true
+      test: ["CMD", "curl", "-f", "http://localhost/api/health"]
+      interval: 30s
+      timeout: 30s
+      retries: 10
+      start_period: 180s
 
 networks:
   coolify:
