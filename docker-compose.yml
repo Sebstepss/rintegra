@@ -41,6 +41,8 @@ services:
       - coolify
     labels:
       - "coolify.managed=true"
+    healthcheck:
+      disable: true
 
 networks:
   coolify:
