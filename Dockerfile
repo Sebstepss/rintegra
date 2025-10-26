@@ -83,9 +83,10 @@ COPY ./docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 # Exponer puerto
 EXPOSE 80
 
-# Health check - aumentar start-period para dar tiempo a que la DB esté lista
-HEALTHCHECK --interval=30s --timeout=10s --start-period=120s --retries=5 \
-    CMD curl -f http://localhost/api/health || exit 1
+# Health check desactivado - Coolify maneja sus propios health checks
+# Si necesitas habilitarlo, descomenta las siguientes líneas:
+# HEALTHCHECK --interval=30s --timeout=10s --start-period=120s --retries=5 \
+#     CMD curl -f http://localhost/api/health || exit 1
 
 # Comando de inicio
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
