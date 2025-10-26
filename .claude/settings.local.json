@@ -47,7 +47,11 @@
       "Bash(git add:*)",
       "Bash(git commit:*)",
       "Bash(git push:*)",
-      "Bash(tree:*)"
+      "Bash(tree:*)",
+      "Bash(ren:*)",
+      "Bash(if exist nul del nul)",
+      "Bash(if exist storage rmdir storage)",
+      "Bash(git log:*)"
     ],
     "deny": [],
     "additionalDirectories": [

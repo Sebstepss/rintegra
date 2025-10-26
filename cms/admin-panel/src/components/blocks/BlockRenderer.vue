@@ -64,6 +64,7 @@ import ContainerBlock from './ContainerBlock.vue'
 import ImageGalleryBlock from './ImageGalleryBlock.vue'
 import TeamBlock from './TeamBlock.vue'
 import ServicesBlock from './ServicesBlock.vue'
+import ContactBlock from './ContactBlock.vue'
 import MapBlock from './MapBlock.vue'
 import LeadConverterBlock from './LeadConverterBlock.vue'
 
@@ -95,6 +96,7 @@ const blockComponents = {
   'image-gallery': markRaw(ImageGalleryBlock),
   'team': markRaw(TeamBlock),
   'services': markRaw(ServicesBlock),
+  'contact': markRaw(ContactBlock),
   'map': markRaw(MapBlock),
   'lead-converter': markRaw(LeadConverterBlock)
 }
@@ -114,6 +116,7 @@ const getBlockTypeName = (type: string): string => {
     'image-gallery': 'Galería de Imágenes',
     'team': 'Equipo de Trabajo',
     'services': 'Servicios',
+    'contact': 'Contacto',
     'map': 'Mapa de Google',
     'lead-converter': 'Conversor de Leads'
   }
@@ -155,6 +158,10 @@ const getBlockTitle = (block: Block): string => {
       const servicesCount = (block as any).services?.length || 0
       const displayMode = (block as any).displayMode || 'tabs'
       return `Servicios (${servicesCount} servicios, ${displayMode})`
+    case 'contact':
+      const contactBlock = block as any
+      const contactItemsCount = contactBlock.contactItems?.length || 0
+      return contactBlock.title || `Contacto (${contactItemsCount} tarjetas)`
     case 'map':
       const mapBlock = block as any
       return mapBlock.title || mapBlock.address || 'Mapa de Google'

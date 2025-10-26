@@ -20,8 +20,8 @@ export function buildMediaUrl(url: string): string {
     const storagePath = url.split('/storage/')[1]
 
     if (import.meta.env.DEV) {
-      // Local: storage está dentro del backend Laravel
-      return `http://localhost/rintegra/backend/public/storage/${storagePath}`
+      // Local: storage está dentro del CMS Laravel
+      return `http://localhost/rintegra/cms/public/storage/${storagePath}`
     } else {
       // Producción: usar symlink de storage
       return `https://r-integra.com/storage/${storagePath}`
@@ -30,9 +30,9 @@ export function buildMediaUrl(url: string): string {
   
   // Para otras URLs del API
   const urlPath = url.startsWith('/') ? url : `/${url}`
-  const baseUrl = import.meta.env.DEV 
-    ? 'http://localhost/rintegra/backend/public'    // Local XAMPP
-    : 'https://r-integra.com/api'                   // Producción
+  const baseUrl = import.meta.env.DEV
+    ? 'http://localhost/rintegra/cms/public'    // Local XAMPP
+    : 'https://r-integra.com/api'               // Producción
   return `${baseUrl}${urlPath}`
 }
 

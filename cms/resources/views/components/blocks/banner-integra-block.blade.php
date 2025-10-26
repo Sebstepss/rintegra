@@ -19,7 +19,7 @@
     @endif
 
     <div class="banner-inner"
-         style="background: radial-gradient(circle at center, {{ $gradientStart }}, {{ $gradientEnd }}); position: relative; min-height: 500px; display: flex; align-items: center; padding: 4rem 2rem; overflow: hidden;">
+         style="background: radial-gradient(circle at center, {{ $gradientStart }}, {{ $gradientEnd }}); position: relative; min-height: 500px; display: flex; align-items: center; overflow: hidden;">
 
         @if($backgroundImage)
             <div class="banner-background"
@@ -77,7 +77,7 @@
 
             @if(isset($block['personImage']) && $block['personImage'])
                 <div class="banner-person"
-                     style="display: flex; justify-content: center; align-items: center;">
+                     style="display: flex; justify-content: center; align-items: flex-end;">
                     <img src="{{ $block['personImage'] }}"
                          alt="Person"
                          style="max-width: 100%; height: auto; object-fit: contain; max-height: 500px;"
@@ -104,7 +104,7 @@
 
         .banner-inner {
             min-height: 400px !important;
-            padding: 2rem 1rem !important;
+            
         }
     }
 </style>

@@ -2,8 +2,8 @@ import axios from 'axios'
 
 const api = axios.create({
   baseURL: import.meta.env.DEV
-    ? 'http://localhost/rintegra/backend/public/api'  // Local XAMPP
-    : 'https://r-integra.com/api',                    // Producción
+    ? 'http://localhost/rintegra/cms/public/api'  // Local XAMPP
+    : 'https://r-integra.com/api',                // Producción
   headers: {
     'Content-Type': 'application/json',
     'Accept': 'application/json',

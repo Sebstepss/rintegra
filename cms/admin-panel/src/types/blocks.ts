@@ -244,6 +244,35 @@ export interface ServicesBlock extends BaseBlock {
   services: ServiceItem[]
 }
 
+export interface ContactItem {
+  id: string
+  type: 'address' | 'phone' | 'email' | 'hours' | 'social' | 'custom'
+  icon: string
+  title: string
+  value?: string
+  hours?: string[] // Para type='hours'
+  socials?: Array<{ // Para type='social'
+    name: string
+    icon: string
+    url: string
+  }>
+}
+
+export interface ContactBlock extends BaseBlock {
+  type: 'contact'
+  title?: string
+  subtitle?: string
+  contactItems: ContactItem[]
+  iconColor?: string
+  textColor?: string
+  backgroundColor?: string
+  padding: 'none' | 'small' | 'medium' | 'large'
+  showMap: boolean
+  mapAddress?: string
+  mapZoom?: number
+  mapHeight?: number
+}
+
 export interface MapBlock extends BaseBlock {
   type: 'map'
   title?: string
@@ -331,7 +360,7 @@ export interface LeadConverterBlock extends BaseBlock {
   backgroundColor?: string
 }
 
-export type Block = HeroBlock | TextBlock | ImageBlock | CallToActionBlock | ColumnsBlock | SpacerBlock | BannerIntegraBlock | CualidadesBlock | TextoyVideoBlock | ContainerBlock | ImageGalleryBlock | TeamBlock | ServicesBlock | MapBlock | LeadConverterBlock
+export type Block = HeroBlock | TextBlock | ImageBlock | CallToActionBlock | ColumnsBlock | SpacerBlock | BannerIntegraBlock | CualidadesBlock | TextoyVideoBlock | ContainerBlock | ImageGalleryBlock | TeamBlock | ServicesBlock | ContactBlock | MapBlock | LeadConverterBlock
 
 export interface BlockTemplate {
   type: string

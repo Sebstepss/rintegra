@@ -54,6 +54,10 @@
                             @include('components.blocks.image-gallery-block', ['block' => $block])
                             @break
 
+                        @case('contact')
+                            @include('components.blocks.contact-block', ['block' => $block])
+                            @break
+
                         @case('map')
                             @include('components.blocks.map-block', ['block' => $block])
                             @break

@@ -144,6 +144,7 @@ import ImageGalleryBlockEditor from './ImageGalleryBlockEditor.vue'
 import TeamBlockEditor from './TeamBlockEditor.vue'
 import ServicesBlockEditor from './ServicesBlockEditor.vue'
 import MapBlockEditor from './MapBlockEditor.vue'
+import ContactBlockEditor from './ContactBlockEditor.vue'
 import LeadConverterBlockEditor from './LeadConverterBlockEditor.vue'
 import { useBlockTemplates } from '@/composables/useBlockTemplates'
 import type { Block } from '@/types/blocks'
@@ -268,6 +269,10 @@ const getBlockTitle = (block: Block): string => {
     case 'services':
       const servicesCount = (block as any).services?.length || 0
       return `Servicios (${servicesCount} servicios)`
+    case 'contact':
+      const contactBlock = block as any
+      const contactItemsCount = contactBlock.contactItems?.length || 0
+      return contactBlock.title || `Contacto (${contactItemsCount} tarjetas)`
     case 'map':
       const mapBlock = block as any
       return mapBlock.title || mapBlock.address || 'Mapa de Google'
@@ -471,6 +476,7 @@ const blockEditorComponents = {
   'image-gallery': markRaw(ImageGalleryBlockEditor),
   'team': markRaw(TeamBlockEditor),
   'services': markRaw(ServicesBlockEditor),
+  'contact': markRaw(ContactBlockEditor),
   'map': markRaw(MapBlockEditor),
   'lead-converter': markRaw(LeadConverterBlockEditor)
   // Aquí se pueden agregar más editores específicos en el futuro

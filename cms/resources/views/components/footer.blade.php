@@ -142,7 +142,7 @@
                     <div class="contact-info">
                         @foreach($contactInfo as $contact)
                             <div class="contact-item">
-                                <i class="{{ $contact['icon'] }}" class="contact-icon"></i>
+                                <i class="{{ $contact['icon'] }} contact-icon"></i>
                                 <span class="contact-text">{!! $contact['text'] !!}</span>
                             </div>
                         @endforeach
@@ -349,7 +349,8 @@
     justify-content: center;
 }
 
-.logo-image {
+.footer .logo-image {
+    height: 150px;
     max-height: 200px;
     width: auto;
     object-fit: contain;
@@ -496,7 +497,7 @@ document.getElementById('contactForm')?.addEventListener('submit', async functio
         const formData = new FormData(form);
         const data = Object.fromEntries(formData);
 
-        const response = await fetch('/api/forms/submit', {
+        const response = await fetch('{{ url("/api/forms/submit") }}', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

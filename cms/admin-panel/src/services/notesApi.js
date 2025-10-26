@@ -1,8 +1,8 @@
 import axios from 'axios'
 
-const API_BASE_URL = import.meta.env.DEV 
-  ? 'http://localhost/rintegra/backend/public/api'  // Local XAMPP
-  : 'https://r-integra.com/api'                     // Producción
+const API_BASE_URL = import.meta.env.DEV
+  ? 'http://localhost/rintegra/cms/public/api'  // Local XAMPP
+  : 'https://r-integra.com/api'                 // Producción
 
 const notesApi = {
   // Obtener todas las notas

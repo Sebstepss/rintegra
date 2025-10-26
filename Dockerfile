@@ -1,7 +1,7 @@
-# Imagen base
-FROM php:8.2-fpm-alpine
+# Multi-stage build para optimizar la imagen
+FROM php:8.2-fpm-alpine AS base
 
-# Instalar dependencias
+# Instalar dependencias del sistema
 RUN apk add --no-cache \
     git \
     curl \
@@ -16,64 +16,76 @@ RUN apk add --no-cache \
     nodejs \
     npm
 
-# Extensiones PHP
+# Instalar extensiones PHP
 RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
 
-# Composer
+# Instalar Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Usuario
+# Crear usuario no-root
 RUN addgroup -g 1000 www && adduser -u 1000 -G www -s /bin/sh -D www
 
+# Directorio de trabajo
 WORKDIR /var/www
 
-# Copiar backend
-COPY --chown=www:www ./backend /var/www/backend
-WORKDIR /var/www/backend
+# ===== BACKEND (Laravel CMS) =====
+# Copiar archivos del CMS
+COPY --chown=www:www ./cms /var/www/cms
+
+# Instalar dependencias de Composer
+WORKDIR /var/www/cms
 RUN composer install --optimize-autoloader --no-dev --no-interaction
 
-# Copiar frontend y buildearlo
-COPY --chown=www:www ./frontend /var/www/frontend
-WORKDIR /var/www/frontend
-RUN npm install && npm run build
+# ===== FRONTEND (Vue Admin Panel) =====
+# Copiar y construir admin-panel
+COPY --chown=www:www ./cms/admin-panel /var/www/cms/admin-panel
+WORKDIR /var/www/cms/admin-panel
+RUN npm ci && npm run build
 
 # Verificar que el build se generó y mover al public de Laravel
-RUN ls -la /var/www/frontend/dist/ && \
-    cp -r /var/www/frontend/dist/* /var/www/backend/public/ && \
-    ls -la /var/www/backend/public/
+RUN ls -la /var/www/cms/admin-panel/dist/ && \
+    mkdir -p /var/www/cms/public/admin && \
+    cp -r /var/www/cms/admin-panel/dist/* /var/www/cms/public/admin/ && \
+    ls -la /var/www/cms/public/admin/
 
-# Volver a backend
-WORKDIR /var/www/backend
+# Volver al CMS
+WORKDIR /var/www/cms
 
-# Copiar .env.example a .env y generar APP_KEY
-RUN cp .env.example .env \
-    && php artisan key:generate --force \
-    && mkdir -p storage/app/public \
-    && php artisan storage:link \
-    && php artisan migrate --force \
-    && php artisan config:cache
+# Copiar configuración de entorno
+RUN if [ -f .env.production ]; then cp .env.production .env; elif [ -f .env.example ]; then cp .env.example .env; fi
 
-# Permisos
-RUN chown -R www:www /var/www/backend \
-    && chmod -R 775 /var/www/backend/storage \
-    && chmod -R 775 /var/www/backend/bootstrap/cache \
-    && chmod -R 777 /var/www/backend/storage/framework \
-    && chmod -R 777 /var/www/backend/storage/logs \
-    && chmod -R 777 /var/www/backend/storage/app/public
+# Generar APP_KEY y preparar Laravel
+RUN php artisan key:generate --force && \
+    mkdir -p storage/app/public && \
+    php artisan storage:link || true
+
+# Permisos para Laravel
+RUN chown -R www:www /var/www/cms && \
+    chmod -R 755 /var/www/cms/storage && \
+    chmod -R 755 /var/www/cms/bootstrap/cache && \
+    chmod -R 777 /var/www/cms/storage/framework && \
+    chmod -R 777 /var/www/cms/storage/logs && \
+    chmod -R 777 /var/www/cms/storage/app/public
 
 # Crear y dar permisos a carpetas temporales de Nginx
 RUN mkdir -p /var/lib/nginx/tmp/client_body \
-    && mkdir -p /var/lib/nginx/tmp/proxy \
-    && mkdir -p /var/lib/nginx/tmp/fastcgi \
-    && chown -R www:www /var/lib/nginx \
-    && chmod -R 777 /var/lib/nginx/tmp
+    /var/lib/nginx/tmp/proxy \
+    /var/lib/nginx/tmp/fastcgi && \
+    chown -R www:www /var/lib/nginx && \
+    chmod -R 777 /var/lib/nginx/tmp
 
-# Nginx config
+# Configurar Nginx
 COPY ./docker/nginx-unified.conf /etc/nginx/nginx.conf
 
-# Supervisor config
-COPY ./docker/supervisord.conf /etc/nginx/conf.d/supervisord.conf
+# Configurar Supervisor
+COPY ./docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
+# Exponer puerto
 EXPOSE 80
 
-CMD ["/usr/bin/supervisord", "-c", "/etc/nginx/conf.d/supervisord.conf"]
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=40s --retries=3 \
+    CMD curl -f http://localhost/api/health || exit 1
+
+# Comando de inicio
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]

@@ -1,11 +1,68 @@
-node_modules
+# Git
 .git
-.env
+.gitignore
+.gitattributes
+
+# IDE
+.vscode
+.idea
+*.sublime*
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Temporales
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# Documentación
 *.md
-backend/vendor
-backend/storage/logs/*
-backend/storage/framework/cache/*
-backend/storage/framework/sessions/*
-backend/storage/framework/views/*
-frontend/dist
-frontend/node_modules
+!README.md
+DEPLOYMENT*.md
+OPTIMIZACIONES.md
+errordeploy.md
+
+# Testing
+.phpunit.result.cache
+.phpunit.cache
+
+# Environment
+.env.local
+.env.*.local
+
+# Node modules (se instalan en build)
+node_modules/
+
+# CMS específicos
+cms/.env.local
+cms/node_modules/
+cms/vendor/
+cms/storage/logs/*
+cms/storage/framework/cache/*
+cms/storage/framework/sessions/*
+cms/storage/framework/views/*
+cms/public/hot
+cms/.phpunit.result.cache
+
+# Admin panel específicos
+cms/admin-panel/node_modules/
+cms/admin-panel/dist/
+cms/admin-panel/.env.local
+cms/admin-panel/.env.*.local
+
+# Build artifacts
+dist/
+build/
+*.tgz
+
+# Docker
+docker-compose.override.yml
+
+# Utilidades
+utilidades/

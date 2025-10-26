@@ -196,6 +196,58 @@ export function useBlockTemplates() {
       }
     },
     {
+      type: 'contact',
+      name: 'Contacto',
+      icon: 'fas fa-address-card',
+      description: 'Sección de contacto profesional con tarjetas de información y mapa opcional',
+      defaultProps: {
+        type: 'contact',
+        title: 'Contáctanos',
+        subtitle: 'Estamos aquí para ayudarte. Ponte en contacto con nosotros.',
+        contactItems: [
+          {
+            id: 'contact-1',
+            type: 'address',
+            icon: 'fas fa-map-marker-alt',
+            title: 'Nuestra Oficina',
+            value: 'Cra 14 #18-50, Cali, Valle del Cauca'
+          },
+          {
+            id: 'contact-2',
+            type: 'phone',
+            icon: 'fas fa-phone',
+            title: 'Teléfono',
+            value: '+57 320 8994424'
+          },
+          {
+            id: 'contact-3',
+            type: 'email',
+            icon: 'fas fa-envelope',
+            title: 'Email',
+            value: 'contacto@r-integra.com'
+          },
+          {
+            id: 'contact-4',
+            type: 'hours',
+            icon: 'fas fa-clock',
+            title: 'Horario de Atención',
+            hours: [
+              'Lunes a Viernes: 9:00 - 18:00',
+              'Sábados: 9:00 - 13:00'
+            ]
+          }
+        ],
+        iconColor: '#0C6444',
+        textColor: '#333',
+        backgroundColor: '#ffffff',
+        padding: 'medium',
+        showMap: true,
+        mapAddress: 'Cra 14 #18-50, Cali, Valle del Cauca',
+        mapZoom: 15,
+        mapHeight: 450
+      }
+    },
+    {
       type: 'map',
       name: 'Mapa de Google',
       icon: 'fas fa-map-marked-alt',
