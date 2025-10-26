@@ -15,15 +15,15 @@ services:
       - APP_KEY=${APP_KEY}
       - APP_DEBUG=${APP_DEBUG:-false}
       - APP_URL=${APP_URL:-http://localhost}
-      - DB_CONNECTION=mysql
-      - DB_HOST=db
-      - DB_PORT=3306
+      - DB_CONNECTION=${DB_CONNECTION:-mysql}
+      - DB_HOST=${DB_HOST:-db}
+      - DB_PORT=${DB_PORT:-3306}
       - DB_DATABASE=${DB_DATABASE:-rintegra}
       - DB_USERNAME=${DB_USERNAME:-rintegra}
       - DB_PASSWORD=${DB_PASSWORD}
       - CACHE_DRIVER=${CACHE_DRIVER:-file}
       - SESSION_DRIVER=${SESSION_DRIVER:-file}
-      - QUEUE_CONNECTION=${QUEUE_CONNECTION:-sync}
+      - QUEUE_CONNECTION=${QUEUE_CONNECTION:-database}
       - MAIL_MAILER=${MAIL_MAILER:-smtp}
       - MAIL_HOST=${MAIL_HOST}
       - MAIL_PORT=${MAIL_PORT:-587}
@@ -38,40 +38,10 @@ services:
       - ./cms/storage:/var/www/cms/storage
       - ./cms/public/uploads:/var/www/cms/public/uploads
     networks:
-      - rintegra-network
-    depends_on:
-      - db
+      - coolify
     labels:
       - "coolify.managed=true"
-
-  # Base de datos MySQL
-  db:
-    image: mysql:8.0
-    container_name: rintegra-db
-    restart: unless-stopped
-    environment:
-      MYSQL_DATABASE: ${DB_DATABASE:-rintegra}
-      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-root}
-      MYSQL_USER: ${DB_USERNAME:-rintegra}
-      MYSQL_PASSWORD: ${DB_PASSWORD}
-    volumes:
-      - db-data:/var/lib/mysql
-      - ./docker/mysql-init:/docker-entrypoint-initdb.d
-    networks:
-      - rintegra-network
-    labels:
-      - "coolify.managed=true"
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${DB_ROOT_PASSWORD:-root}"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 30s
-
-volumes:
-  db-data:
-    driver: local
 
 networks:
-  rintegra-network:
-    driver: bridge
+  coolify:
+    external: true

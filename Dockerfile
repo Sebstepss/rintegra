@@ -51,13 +51,12 @@ RUN ls -la /var/www/cms/admin-panel/dist/ && \
 # Volver al CMS
 WORKDIR /var/www/cms
 
-# Copiar configuración de entorno
-RUN if [ -f .env.production ]; then cp .env.production .env; elif [ -f .env.example ]; then cp .env.example .env; fi
-
-# Generar APP_KEY y preparar Laravel
-RUN php artisan key:generate --force && \
+# NO copiar .env - Coolify inyecta las variables de entorno en runtime
+# Crear .env mínimo solo para que Laravel no falle en build
+RUN echo "APP_KEY=base64:dummy" > .env && \
     mkdir -p storage/app/public && \
-    php artisan storage:link || true
+    php artisan storage:link || true && \
+    rm .env || true
 
 # Permisos para Laravel
 RUN chown -R www:www /var/www/cms && \
