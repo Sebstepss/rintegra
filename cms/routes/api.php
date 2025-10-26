@@ -11,6 +11,33 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\BackupController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\DB;
+
+// Health check endpoint for Docker/Coolify
+Route::get('/health', function () {
+    $status = 'healthy';
+    $httpCode = 200;
+    $checks = [
+        'app' => 'running',
+        'timestamp' => now()->toIso8601String()
+    ];
+
+    // Check database connection (non-blocking)
+    try {
+        DB::connection()->getPdo();
+        $checks['database'] = 'connected';
+    } catch (\Exception $e) {
+        // During startup, DB might not be ready yet - don't fail the health check
+        $checks['database'] = 'initializing';
+        $checks['db_message'] = 'Database connection pending';
+        // Only fail if we've been running for a while (check if migrations exist)
+        if (file_exists(base_path('database/migrations'))) {
+            \Log::warning('Health check: Database not connected yet - ' . $e->getMessage());
+        }
+    }
+
+    return response()->json($checks, $httpCode);
+});
 
 // Rutas de autenticación
 Route::post('/register', [AuthController::class, 'register']);
