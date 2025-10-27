@@ -486,7 +486,7 @@ const editPage = (page) => {
 }
 
 const editContent = (page) => {
-  router.push(`/admin/pages/${page.id}/blocks`)
+  router.push(`/pages/${page.id}/blocks`)
 }
 
 const deletePage = async (page) => {
