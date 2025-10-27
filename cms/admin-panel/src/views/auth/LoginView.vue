@@ -43,12 +43,6 @@
         </button>
       </form>
 
-      <div class="auth-footer">
-        <p>
-          ¿No tienes cuenta?
-          <router-link to="/register" class="auth-link">Regístrate aquí</router-link>
-        </p>
-      </div>
     </div>
   </div>
 </template>
