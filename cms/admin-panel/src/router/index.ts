@@ -11,10 +11,10 @@ import BlockEditorPage from '@/views/admin/BlockEditorPage.vue'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
-    // Redirect root to admin dashboard
+    // Redirect root to dashboard (relative to /admin/ base)
     {
       path: '/',
-      redirect: '/admin'
+      redirect: '/dashboard'
     },
     // Auth Routes (sin layout)
     {
@@ -24,13 +24,13 @@ const router = createRouter({
     },
     // Admin Routes (protegidas)
     {
-      path: '/admin',
+      path: '/dashboard',
       name: 'admin',
       component: AdminDashboard,
       meta: { requiresAuth: true }
     },
     {
-      path: '/admin/pages/:id/blocks',
+      path: '/pages/:id/blocks',
       name: 'block-editor',
       component: BlockEditorPage,
       meta: { requiresAuth: true }

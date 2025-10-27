@@ -65,10 +65,10 @@ const error = computed(() => authStore.error)
 
 const handleLogin = async () => {
   authStore.clearError()
-  
+
   try {
     await authStore.login(form.value)
-    router.push('/admin')
+    router.push('/dashboard')
   } catch (error) {
     console.error('Login failed:', error)
   }
