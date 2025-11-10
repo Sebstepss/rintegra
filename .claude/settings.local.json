@@ -51,7 +51,9 @@
       "Bash(ren:*)",
       "Bash(if exist nul del nul)",
       "Bash(if exist storage rmdir storage)",
-      "Bash(git log:*)"
+      "Bash(git log:*)",
+      "Bash(git checkout:*)",
+      "Bash(git branch:*)"
     ],
     "deny": [],
     "additionalDirectories": [
