@@ -30,7 +30,7 @@
           <div v-if="selectedFiles.length === 0" class="upload-prompt">
             <i class="fas fa-cloud-upload-alt upload-icon"></i>
             <h4>Arrastra archivos aquí o haz clic para seleccionar</h4>
-            <p>Máximo 10 archivos, 10MB por archivo</p>
+            <p>Máximo 10 archivos, 20MB por archivo</p>
             <p class="file-types">
               Soporta: Imágenes, Videos, PDF, Word, Excel, PowerPoint, TXT, CSV
             </p>

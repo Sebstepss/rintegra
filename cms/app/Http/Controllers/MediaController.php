@@ -43,7 +43,7 @@ class MediaController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'file' => 'required|file|max:10240|mimes:jpeg,png,gif,webp,jpg,mp4,webm,mov,avi,mkv,pdf,doc,docx,xls,xlsx,ppt,pptx,txt,csv,rtf', // Máximo 10MB
+            'file' => 'required|file|max:20480|mimes:jpeg,png,gif,webp,jpg,mp4,webm,mov,avi,mkv,pdf,doc,docx,xls,xlsx,ppt,pptx,txt,csv,rtf', // Máximo 20MB
             'alt_text' => 'nullable|string|max:255',
             'description' => 'nullable|string|max:1000'
         ]);
@@ -159,7 +159,7 @@ class MediaController extends Controller
     {
         $request->validate([
             'files' => 'required|array|max:10',
-            'files.*' => 'required|file|max:10240|mimes:jpeg,png,gif,webp,jpg,mp4,webm,mov,avi,mkv,pdf,doc,docx,xls,xlsx,ppt,pptx,txt,csv,rtf'
+            'files.*' => 'required|file|max:20480|mimes:jpeg,png,gif,webp,jpg,mp4,webm,mov,avi,mkv,pdf,doc,docx,xls,xlsx,ppt,pptx,txt,csv,rtf'
         ]);
 
         $uploadedMedia = [];
