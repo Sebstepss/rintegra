@@ -19,6 +19,9 @@ RUN apk add --no-cache \
 # Instalar extensiones PHP
 RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
 
+# Copiar configuración PHP personalizada
+COPY ./docker/php.ini /usr/local/etc/php/conf.d/custom.ini
+
 # Instalar Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
