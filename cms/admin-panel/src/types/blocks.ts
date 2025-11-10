@@ -135,8 +135,24 @@ export interface CualidadesBlock extends BaseBlock {
   items: CualidadItem[]
 }
 
+export interface TextoyVideoColumn {
+  id: string
+  videoType: 'media' | 'youtube' | 'vimeo'
+  videoUrl: string
+  videoMediaId?: number
+  title: string
+  description: string
+}
+
 export interface TextoyVideoBlock extends BaseBlock {
   type: 'textoy-video'
+  layoutMode: 'two-column' | 'multi-column'
+
+  // Configuración común
+  aspectRatio: '4:5' | '16:9' | '9:16' | '1:1'
+  backgroundColor: string
+
+  // Layout dos columnas (modo actual)
   title: string
   titleColor: string
   description: string
@@ -145,10 +161,14 @@ export interface TextoyVideoBlock extends BaseBlock {
   buttonLink: string
   buttonColor: string
   buttonTextColor: string
-  videoType: 'media' | 'youtube'
-  videoUrl: string // URL de YouTube o ID de media
-  videoMediaId?: number // ID del media si es tipo media
-  backgroundColor: string
+  videoType: 'media' | 'youtube' | 'vimeo'
+  videoUrl: string
+  videoMediaId?: number
+
+  // Layout múltiples columnas
+  columnsCount: 1 | 2 | 3 | 4
+  gap: 'small' | 'medium' | 'large'
+  columns: TextoyVideoColumn[]
 }
 
 export interface ContainerBlock extends BaseBlock {

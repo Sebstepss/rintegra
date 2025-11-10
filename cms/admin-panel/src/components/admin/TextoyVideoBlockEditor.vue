@@ -39,18 +39,51 @@
           <!-- Configuración General -->
           <div class="editor-section">
             <h4>Configuración General</h4>
+
+            <div class="form-group">
+              <label>Modo de diseño</label>
+              <div class="radio-group">
+                <label class="radio-label">
+                  <input
+                    type="radio"
+                    v-model="localBlock.layoutMode"
+                    value="two-column"
+                  >
+                  <span>Dos columnas (Texto + Video)</span>
+                </label>
+                <label class="radio-label">
+                  <input
+                    type="radio"
+                    v-model="localBlock.layoutMode"
+                    value="multi-column"
+                  >
+                  <span>Múltiples Columnas</span>
+                </label>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="aspect-ratio">Relación de aspecto del video</label>
+              <select v-model="localBlock.aspectRatio" class="form-input">
+                <option value="4:5">4:5 (Vertical - Reels/Shorts)</option>
+                <option value="16:9">16:9 (Horizontal)</option>
+                <option value="9:16">9:16 (Vertical)</option>
+                <option value="1:1">1:1 (Cuadrado)</option>
+              </select>
+            </div>
+
             <div class="form-group">
               <label for="bg-color">Color de fondo</label>
               <div class="color-input-group">
-                <input 
-                  type="color" 
-                  id="bg-color" 
+                <input
+                  type="color"
+                  id="bg-color"
                   v-model="localBlock.backgroundColor"
                   class="color-picker"
                 >
-                <input 
-                  type="text" 
-                  v-model="localBlock.backgroundColor" 
+                <input
+                  type="text"
+                  v-model="localBlock.backgroundColor"
                   class="color-text"
                   placeholder="#ffffff"
                 >
@@ -182,30 +215,39 @@
             </div>
           </div>
 
-          <!-- Configuración de Video -->
-          <div class="editor-section">
+          <!-- Configuración de Video - Layout Dos Columnas -->
+          <div v-if="localBlock.layoutMode === 'two-column'" class="editor-section">
             <h4>Configuración de Video</h4>
-            
+
             <div class="form-group">
               <label>Tipo de video</label>
               <div class="radio-group">
                 <label class="radio-label">
-                  <input 
-                    type="radio" 
-                    v-model="localBlock.videoType" 
+                  <input
+                    type="radio"
+                    v-model="localBlock.videoType"
                     value="youtube"
                     @change="handleVideoTypeChange"
                   >
-                  <span>Video de YouTube</span>
+                  <span>YouTube (incluyendo Shorts)</span>
                 </label>
                 <label class="radio-label">
-                  <input 
-                    type="radio" 
-                    v-model="localBlock.videoType" 
+                  <input
+                    type="radio"
+                    v-model="localBlock.videoType"
+                    value="vimeo"
+                    @change="handleVideoTypeChange"
+                  >
+                  <span>Vimeo</span>
+                </label>
+                <label class="radio-label">
+                  <input
+                    type="radio"
+                    v-model="localBlock.videoType"
                     value="media"
                     @change="handleVideoTypeChange"
                   >
-                  <span>Video desde Medios</span>
+                  <span>Video Local</span>
                 </label>
               </div>
             </div>
@@ -213,15 +255,30 @@
             <!-- YouTube Video -->
             <div v-if="localBlock.videoType === 'youtube'" class="form-group">
               <label for="youtube-url">URL de YouTube</label>
-              <input 
-                type="url" 
-                id="youtube-url" 
-                v-model="localBlock.videoUrl" 
+              <input
+                type="url"
+                id="youtube-url"
+                v-model="localBlock.videoUrl"
                 class="form-input"
-                placeholder="https://www.youtube.com/watch?v=..."
+                placeholder="https://www.youtube.com/watch?v=... o https://www.youtube.com/shorts/..."
               >
               <small class="form-help">
-                Puedes usar cualquier formato: youtube.com/watch?v=ID, youtu.be/ID, o solo el ID
+                Soporta: youtube.com/watch?v=ID, youtu.be/ID, youtube.com/shorts/ID, o solo el ID
+              </small>
+            </div>
+
+            <!-- Vimeo Video -->
+            <div v-if="localBlock.videoType === 'vimeo'" class="form-group">
+              <label for="vimeo-url">URL de Vimeo</label>
+              <input
+                type="url"
+                id="vimeo-url"
+                v-model="localBlock.videoUrl"
+                class="form-input"
+                placeholder="https://vimeo.com/... o solo el ID"
+              >
+              <small class="form-help">
+                Puedes usar: vimeo.com/ID o solo el ID del video
               </small>
             </div>
 
@@ -246,6 +303,92 @@
                   Seleccionar video
                 </button>
               </div>
+            </div>
+          </div>
+
+          <!-- Configuración de Múltiples Columnas -->
+          <div v-if="localBlock.layoutMode === 'multi-column'" class="editor-section">
+            <h4>Configuración de Columnas</h4>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="columns-count">Número de columnas</label>
+                <select v-model.number="localBlock.columnsCount" class="form-input">
+                  <option :value="1">1 columna</option>
+                  <option :value="2">2 columnas</option>
+                  <option :value="3">3 columnas</option>
+                  <option :value="4">4 columnas</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="gap">Espacio entre columnas</label>
+                <select v-model="localBlock.gap" class="form-input">
+                  <option value="small">Pequeño</option>
+                  <option value="medium">Medio</option>
+                  <option value="large">Grande</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <h5>Videos en columnas</h5>
+              <div class="columns-list">
+                <div v-for="(col, idx) in localBlock.columns" :key="col.id" class="column-item">
+                  <div class="column-header">
+                    <h6>Columna {{ idx + 1 }}</h6>
+                    <button @click="removeColumn(idx)" class="btn-small btn-danger" type="button">
+                      <i class="fas fa-trash"></i>
+                    </button>
+                  </div>
+
+                  <div class="form-group">
+                    <label :for="`col-type-${idx}`">Tipo de video</label>
+                    <select :id="`col-type-${idx}`" v-model="col.videoType" class="form-input">
+                      <option value="youtube">YouTube</option>
+                      <option value="vimeo">Vimeo</option>
+                      <option value="media">Video Local</option>
+                    </select>
+                  </div>
+
+                  <div class="form-group">
+                    <label :for="`col-url-${idx}`">URL del video</label>
+                    <input
+                      :id="`col-url-${idx}`"
+                      type="url"
+                      v-model="col.videoUrl"
+                      class="form-input"
+                      :placeholder="`URL de ${col.videoType}...`"
+                    >
+                  </div>
+
+                  <div class="form-group">
+                    <label :for="`col-title-${idx}`">Título</label>
+                    <input
+                      :id="`col-title-${idx}`"
+                      type="text"
+                      v-model="col.title"
+                      class="form-input"
+                      placeholder="Título de la columna"
+                    >
+                  </div>
+
+                  <div class="form-group">
+                    <label :for="`col-desc-${idx}`">Descripción</label>
+                    <textarea
+                      :id="`col-desc-${idx}`"
+                      v-model="col.description"
+                      class="form-input"
+                      rows="3"
+                      placeholder="Descripción de la columna"
+                    ></textarea>
+                  </div>
+                </div>
+              </div>
+
+              <button @click="addColumn" class="btn-small btn-primary" type="button">
+                <i class="fas fa-plus"></i>
+                Añadir columna
+              </button>
             </div>
           </div>
             </div>
@@ -377,6 +520,11 @@ const {
 const initializeBlock = (block: TextoyVideoBlockType): TextoyVideoBlockType => {
   return {
     ...block,
+    layoutMode: block.layoutMode || 'two-column',
+    aspectRatio: block.aspectRatio || '16:9',
+    columnsCount: block.columnsCount || 2,
+    gap: block.gap || 'medium',
+    columns: block.columns || [],
     customId: block.customId || '',
     customClass: block.customClass || '',
     customCSS: block.customCSS || ''
@@ -434,6 +582,25 @@ const onVideoMediaSelected = (media: any) => {
 const removeSelectedVideo = () => {
   localBlock.value.videoUrl = ''
   localBlock.value.videoMediaId = undefined
+}
+
+// Métodos para manejar columnas (múltiple layout)
+const addColumn = () => {
+  const newColumn = {
+    id: `col-${Date.now()}`,
+    videoType: 'youtube' as const,
+    videoUrl: '',
+    title: '',
+    description: ''
+  }
+  localBlock.value.columns = localBlock.value.columns || []
+  localBlock.value.columns.push(newColumn)
+}
+
+const removeColumn = (index: number) => {
+  if (localBlock.value.columns) {
+    localBlock.value.columns.splice(index, 1)
+  }
 }
 
 // Aplicar cambios y cerrar modal
@@ -890,5 +1057,76 @@ onBeforeUnmount(() => {
   line-height: 1.5;
   resize: vertical;
   min-height: 200px;
+}
+
+/* Estilos para columnas múltiples */
+.columns-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.column-item {
+  padding: 1rem;
+  background: white;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+}
+
+.column-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.column-header h6 {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.btn-small {
+  padding: 0.5rem 1rem;
+  font-size: 0.85rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.btn-small.btn-primary {
+  background: #007bff;
+  color: white;
+}
+
+.btn-small.btn-primary:hover {
+  background: #0056b3;
+  transform: translateY(-1px);
+}
+
+.btn-small.btn-danger {
+  background: #dc3545;
+  color: white;
+}
+
+.btn-small.btn-danger:hover {
+  background: #c82333;
+  transform: translateY(-1px);
+}
+
+.column-item .form-group {
+  margin-bottom: 1rem;
+}
+
+.column-item .form-group:last-child {
+  margin-bottom: 0;
 }
 </style>

@@ -1,12 +1,13 @@
 <template>
   <section class="textoy-video-block" :style="sectionStyles">
     <div class="container">
-      <div class="textoy-video-content">
+      <!-- Layout: Dos Columnas (Texto + Video) -->
+      <div v-if="block.layoutMode === 'two-column'" class="textoy-video-content">
         <!-- Columna de Texto -->
         <div class="text-column">
           <h1 class="title" :style="titleStyles" v-html="block.title"></h1>
           <p class="description" :style="descriptionStyles" v-html="block.description"></p>
-          <button 
+          <button
             class="cta-button"
             :style="buttonStyles"
             @click="handleButtonClick"
@@ -15,35 +16,29 @@
             {{ block.buttonText }}
           </button>
         </div>
-        
+
         <!-- Columna de Video -->
         <div class="video-column">
-          <div class="video-container">
-            <!-- Video de YouTube -->
-            <iframe 
-              v-if="block.videoType === 'youtube' && youtubeEmbedUrl"
-              :src="youtubeEmbedUrl"
-              class="video-iframe"
-              frameborder="0"
-              allowfullscreen
-            ></iframe>
-            
-            <!-- Video de Media -->
-            <video 
-              v-else-if="block.videoType === 'media' && block.videoUrl"
-              :src="block.videoUrl"
-              class="video-element"
-              controls
-              preload="metadata"
-            >
-              Tu navegador no soporta el elemento de video.
-            </video>
-            
-            <!-- Placeholder cuando no hay video -->
-            <div v-else class="video-placeholder">
-              <i class="fas fa-video"></i>
-              <span>Video no disponible</span>
-            </div>
+          <VideoComponent
+            :videoType="block.videoType"
+            :videoUrl="block.videoUrl"
+            :aspectRatio="block.aspectRatio"
+          />
+        </div>
+      </div>
+
+      <!-- Layout: Múltiples Columnas -->
+      <div v-else class="multi-column-videos" :style="multiColumnStyle">
+        <div v-for="(col, idx) in block.columns" :key="col.id" class="video-card">
+          <VideoComponent
+            :videoType="col.videoType"
+            :videoUrl="col.videoUrl"
+            :aspectRatio="block.aspectRatio"
+            class="video-card-video"
+          />
+          <div class="video-card-content">
+            <h3 class="video-card-title">{{ col.title }}</h3>
+            <p class="video-card-description">{{ col.description }}</p>
           </div>
         </div>
       </div>
@@ -54,6 +49,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import type { TextoyVideoBlock } from '@/types/blocks'
+import VideoComponent from './VideoComponent.vue'
 
 interface Props {
   block: TextoyVideoBlock
@@ -94,37 +90,27 @@ const buttonStyles = computed(() => ({
   letterSpacing: 'var(--letter-spacing-p, 0px)'
 }))
 
-const youtubeEmbedUrl = computed(() => {
-  if (props.block.videoType !== 'youtube' || !props.block.videoUrl) {
-    return null
+const multiColumnStyle = computed(() => {
+  const gapMap = {
+    small: '1rem',
+    medium: '2rem',
+    large: '3rem'
   }
-  
-  // Extraer ID del video de YouTube desde diferentes formatos de URL
-  let videoId = ''
-  const url = props.block.videoUrl
-  
-  if (url.includes('youtube.com/watch?v=')) {
-    videoId = url.split('watch?v=')[1].split('&')[0]
-  } else if (url.includes('youtu.be/')) {
-    videoId = url.split('youtu.be/')[1].split('?')[0]
-  } else if (url.includes('youtube.com/embed/')) {
-    videoId = url.split('embed/')[1].split('?')[0]
-  } else {
-    // Asumir que es solo el ID
-    videoId = url
+
+  return {
+    display: 'grid',
+    gridTemplateColumns: `repeat(${props.block.columnsCount}, 1fr)`,
+    gap: gapMap[props.block.gap || 'medium']
   }
-  
-  return videoId ? `https://www.youtube.com/embed/${videoId}` : null
 })
 
 const handleButtonClick = () => {
   if (props.isEditing) return
-  
+
   if (props.block.buttonLink) {
     if (props.block.buttonLink.startsWith('http')) {
       window.open(props.block.buttonLink, '_blank')
     } else {
-      // Para rutas internas, usar el router si está disponible
       window.location.href = props.block.buttonLink
     }
   }
@@ -230,14 +216,46 @@ const handleButtonClick = () => {
   font-weight: 500;
 }
 
+/* Multi-column layout styles */
+.multi-column-videos {
+  width: 100%;
+}
+
+.video-card {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.video-card-video {
+  width: 100%;
+  border-radius: 9px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.video-card-content {
+  padding: 0 0.5rem;
+}
+
+.video-card-title {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.video-card-description {
+  margin: 0;
+  font-size: 0.95rem;
+  color: #6c757d;
+  line-height: 1.5;
+}
+
 /* Responsive Design */
 @media (max-width: 1024px) {
   .textoy-video-content {
     gap: 3rem;
-  }
-  
-  .video-container {
-    max-width: 400px;
   }
 }
 
@@ -245,30 +263,29 @@ const handleButtonClick = () => {
   .textoy-video-block {
     padding: 3rem 0;
   }
-  
+
   .container {
     padding: 0 1rem;
   }
-  
+
   .textoy-video-content {
     grid-template-columns: 1fr;
     gap: 2rem;
     text-align: center;
   }
-  
+
   .text-column {
     gap: 1.5rem;
   }
-  
+
   .cta-button {
     align-self: center;
     width: 100%;
     max-width: 300px;
   }
-  
-  .video-container {
-    max-width: 100%;
-    aspect-ratio: 16/9;
+
+  .multi-column-videos {
+    grid-template-columns: 1fr !important;
   }
 }
 
@@ -276,18 +293,23 @@ const handleButtonClick = () => {
   .textoy-video-block {
     padding: 2rem 0;
   }
-  
+
   .textoy-video-content {
     gap: 1.5rem;
   }
-  
+
   .text-column {
     gap: 1rem;
   }
-  
+
   .cta-button {
     padding: 0.75rem 1.5rem;
     font-size: 0.9rem;
+  }
+
+  .multi-column-videos {
+    grid-template-columns: 1fr !important;
+    gap: 1rem !important;
   }
 }
 </style>
