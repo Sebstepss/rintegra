@@ -107,7 +107,7 @@ onMounted(async () => {
 })
 
 const goBack = () => {
-  router.push('/admin')
+  router.push('/dashboard')
 }
 
 const saveBlocks = async () => {
