@@ -269,7 +269,7 @@
     .nav-link {
         font-size: 1.2rem;
         padding: 1rem 2rem;
-        width: 80%;
+        width: 100%;
         text-align: center;
         color: #2c3e50 !important;
     }

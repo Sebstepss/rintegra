@@ -102,9 +102,9 @@
             font-size: 1rem !important;
         }
 
-        .banner-inner {
-            min-height: 400px !important;
-            
-        }
+           .banner-inner {
+        padding: 33px 33px 0px;
+        min-height: 400px !important;
+    }
     }
 </style>

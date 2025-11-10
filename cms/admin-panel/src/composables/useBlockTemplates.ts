@@ -100,9 +100,11 @@ export function useBlockTemplates() {
       type: 'textoy-video',
       name: 'Texto y Video',
       icon: 'fas fa-play-circle',
-      description: 'Sección de dos columnas con texto y video en formato 4:5',
+      description: 'Sección con texto y video - Soporta múltiples layouts y formatos',
       defaultProps: {
         type: 'textoy-video',
+        layoutMode: 'two-column',
+        aspectRatio: '16:9',
         title: 'Solidez contable, proyección empresarial',
         titleColor: '#2c3e50',
         description: '<p>En R-INTEGRA ayudamos a nuestros clientes a organizar sus finanzas, cumplir sus obligaciones y tomar decisiones estratégicas con información clara y confiable.</p><p>Unimos conocimiento técnico, planeación fiscal y visión de negocio para construir estructuras financieras sólidas, alineadas con los objetivos de crecimiento de cada empresa o profesional.</p>',
@@ -113,7 +115,10 @@ export function useBlockTemplates() {
         buttonTextColor: '#ffffff',
         videoType: 'youtube',
         videoUrl: '',
-        backgroundColor: '#ffffff'
+        backgroundColor: '#ffffff',
+        columnsCount: 2,
+        gap: 'medium',
+        columns: []
       }
     },
     {

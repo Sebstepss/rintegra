@@ -91,16 +91,16 @@
             </div>
           </div>
 
-          <!-- Configuración de Texto -->
-          <div class="editor-section">
+          <!-- Configuración de Texto - Solo para Layout Dos Columnas -->
+          <div v-if="localBlock.layoutMode === 'two-column'" class="editor-section">
             <h4>Contenido de Texto</h4>
-            
+
             <div class="form-group">
               <label for="title">Título Principal</label>
-              <input 
-                type="text" 
-                id="title" 
-                v-model="localBlock.title" 
+              <input
+                type="text"
+                id="title"
+                v-model="localBlock.title"
                 class="form-input"
                 placeholder="Solidez contable, proyección empresarial"
               >
@@ -109,15 +109,15 @@
             <div class="form-group">
               <label for="title-color">Color del título</label>
               <div class="color-input-group">
-                <input 
-                  type="color" 
-                  id="title-color" 
+                <input
+                  type="color"
+                  id="title-color"
                   v-model="localBlock.titleColor"
                   class="color-picker"
                 >
-                <input 
-                  type="text" 
-                  v-model="localBlock.titleColor" 
+                <input
+                  type="text"
+                  v-model="localBlock.titleColor"
                   class="color-text"
                   placeholder="#000000"
                 >
@@ -134,15 +134,15 @@
             <div class="form-group">
               <label for="desc-color">Color de la descripción</label>
               <div class="color-input-group">
-                <input 
-                  type="color" 
-                  id="desc-color" 
+                <input
+                  type="color"
+                  id="desc-color"
                   v-model="localBlock.descriptionColor"
                   class="color-picker"
                 >
-                <input 
-                  type="text" 
-                  v-model="localBlock.descriptionColor" 
+                <input
+                  type="text"
+                  v-model="localBlock.descriptionColor"
                   class="color-text"
                   placeholder="#666666"
                 >
@@ -150,27 +150,27 @@
             </div>
           </div>
 
-          <!-- Configuración de Botón -->
-          <div class="editor-section">
+          <!-- Configuración de Botón - Solo para Layout Dos Columnas -->
+          <div v-if="localBlock.layoutMode === 'two-column'" class="editor-section">
             <h4>Botón de Acción</h4>
-            
+
             <div class="form-row">
               <div class="form-group">
                 <label for="btn-text">Texto del botón</label>
-                <input 
-                  type="text" 
-                  id="btn-text" 
-                  v-model="localBlock.buttonText" 
+                <input
+                  type="text"
+                  id="btn-text"
+                  v-model="localBlock.buttonText"
                   class="form-input"
                   placeholder="Conoce más sobre nosotros"
                 >
               </div>
               <div class="form-group">
                 <label for="btn-link">Enlace del botón</label>
-                <input 
-                  type="url" 
-                  id="btn-link" 
-                  v-model="localBlock.buttonLink" 
+                <input
+                  type="url"
+                  id="btn-link"
+                  v-model="localBlock.buttonLink"
                   class="form-input"
                   placeholder="https://..."
                 >
@@ -181,15 +181,15 @@
               <div class="form-group">
                 <label for="btn-bg-color">Color de fondo del botón</label>
                 <div class="color-input-group">
-                  <input 
-                    type="color" 
-                    id="btn-bg-color" 
+                  <input
+                    type="color"
+                    id="btn-bg-color"
                     v-model="localBlock.buttonColor"
                     class="color-picker"
                   >
-                  <input 
-                    type="text" 
-                    v-model="localBlock.buttonColor" 
+                  <input
+                    type="text"
+                    v-model="localBlock.buttonColor"
                     class="color-text"
                     placeholder="#007bff"
                   >
@@ -198,15 +198,15 @@
               <div class="form-group">
                 <label for="btn-text-color">Color del texto del botón</label>
                 <div class="color-input-group">
-                  <input 
-                    type="color" 
-                    id="btn-text-color" 
+                  <input
+                    type="color"
+                    id="btn-text-color"
                     v-model="localBlock.buttonTextColor"
                     class="color-picker"
                   >
-                  <input 
-                    type="text" 
-                    v-model="localBlock.buttonTextColor" 
+                  <input
+                    type="text"
+                    v-model="localBlock.buttonTextColor"
                     class="color-text"
                     placeholder="#ffffff"
                   >
@@ -350,15 +350,42 @@
                     </select>
                   </div>
 
-                  <div class="form-group">
+                  <!-- YouTube/Vimeo URL -->
+                  <div v-if="col.videoType === 'youtube' || col.videoType === 'vimeo'" class="form-group">
                     <label :for="`col-url-${idx}`">URL del video</label>
                     <input
                       :id="`col-url-${idx}`"
                       type="url"
                       v-model="col.videoUrl"
                       class="form-input"
-                      :placeholder="`URL de ${col.videoType}...`"
+                      :placeholder="col.videoType === 'youtube' ? 'https://www.youtube.com/watch?v=...' : 'https://vimeo.com/...'"
                     >
+                    <small class="form-help">
+                      {{ col.videoType === 'youtube' ? 'Soporta: youtube.com/watch?v=ID, youtu.be/ID, youtube.com/shorts/ID' : 'Ejemplo: vimeo.com/123456789' }}
+                    </small>
+                  </div>
+
+                  <!-- Media Picker para Video Local -->
+                  <div v-if="col.videoType === 'media'" class="form-group">
+                    <label>Video desde biblioteca de medios</label>
+                    <div class="media-selector">
+                      <div v-if="col.videoUrl" class="selected-media">
+                        <video :src="col.videoUrl" class="media-preview" controls>
+                          Tu navegador no soporta el elemento de video.
+                        </video>
+                        <button @click="removeColumnVideo(idx)" class="btn-remove" type="button">
+                          <i class="fas fa-times"></i>
+                        </button>
+                      </div>
+                      <div v-else class="media-placeholder">
+                        <i class="fas fa-video"></i>
+                        <p>No hay video seleccionado</p>
+                      </div>
+                      <button @click="openColumnMediaPicker(idx)" class="btn-media" type="button">
+                        <i class="fas fa-video"></i>
+                        Seleccionar video
+                      </button>
+                    </div>
                   </div>
 
                   <div class="form-group">
@@ -525,6 +552,18 @@ const initializeBlock = (block: TextoyVideoBlockType): TextoyVideoBlockType => {
     columnsCount: block.columnsCount || 2,
     gap: block.gap || 'medium',
     columns: block.columns || [],
+    // Asegurar valores por defecto para modo dos columnas
+    title: block.title || '',
+    titleColor: block.titleColor || '#000000',
+    description: block.description || '',
+    descriptionColor: block.descriptionColor || '#666666',
+    buttonText: block.buttonText || '',
+    buttonLink: block.buttonLink || '',
+    buttonColor: block.buttonColor || '#007bff',
+    buttonTextColor: block.buttonTextColor || '#ffffff',
+    videoType: block.videoType || 'youtube',
+    videoUrl: block.videoUrl || '',
+    backgroundColor: block.backgroundColor || '#ffffff',
     customId: block.customId || '',
     customClass: block.customClass || '',
     customCSS: block.customCSS || ''
@@ -562,8 +601,9 @@ const handleVideoTypeChange = () => {
   localBlock.value.videoMediaId = undefined
 }
 
-// Abrir selector de video
+// Abrir selector de video (modo dos columnas)
 const openVideoMediaPicker = () => {
+  currentColumnIndex.value = null // Asegurar que NO estamos en modo columna
   openMediaPicker({
     typeFilter: 'video',
     multiple: false,
@@ -571,10 +611,26 @@ const openVideoMediaPicker = () => {
   })
 }
 
-// Manejar selección de video desde medios
+// Manejar selección de video desde medios (UNIFICADO para ambos modos)
 const onVideoMediaSelected = (media: any) => {
-  localBlock.value.videoUrl = getFullMediaUrl(media)
-  localBlock.value.videoMediaId = media.id
+  console.log('🎬 onVideoMediaSelected called')
+  console.log('📍 currentColumnIndex:', currentColumnIndex.value)
+  console.log('📦 media:', media)
+
+  // Si currentColumnIndex tiene un valor, estamos en modo columnas
+  if (currentColumnIndex.value !== null && localBlock.value.columns) {
+    console.log('✅ Setting video for column', currentColumnIndex.value)
+    const fullUrl = getFullMediaUrl(media)
+    localBlock.value.columns[currentColumnIndex.value].videoUrl = fullUrl
+    localBlock.value.columns[currentColumnIndex.value].videoMediaId = media.id
+    currentColumnIndex.value = null
+  } else {
+    // Modo dos columnas (comportamiento original)
+    console.log('✅ Setting video for two-column mode')
+    localBlock.value.videoUrl = getFullMediaUrl(media)
+    localBlock.value.videoMediaId = media.id
+  }
+
   closeMediaPicker()
 }
 
@@ -603,6 +659,27 @@ const removeColumn = (index: number) => {
   }
 }
 
+// Estado para manejar el MediaPicker de columnas
+const currentColumnIndex = ref<number | null>(null)
+
+// Abrir MediaPicker para una columna específica
+const openColumnMediaPicker = (index: number) => {
+  currentColumnIndex.value = index
+  openMediaPicker({
+    typeFilter: 'video',
+    multiple: false,
+    onSelect: onVideoMediaSelected // Reutilizar la función unificada
+  })
+}
+
+// Remover video de una columna
+const removeColumnVideo = (index: number) => {
+  if (localBlock.value.columns?.[index]) {
+    localBlock.value.columns[index].videoUrl = ''
+    localBlock.value.columns[index].videoMediaId = undefined
+  }
+}
+
 // Aplicar cambios y cerrar modal
 const applyChanges = () => {
   emit('update', { ...localBlock.value })
@@ -614,13 +691,16 @@ const applyChanges = () => {
 //   emit('update', { ...newBlock })
 // }, { deep: true })
 
-// Sincronizar con props
-watch(() => props.block, (newBlock) => {
-  localBlock.value = { ...newBlock }
-  if (descriptionEditor.value) {
-    descriptionEditor.value.commands.setContent(newBlock.description)
+// Sincronizar con props (solo cuando el bloque cambia externamente, no durante ediciones locales)
+watch(() => props.block, (newBlock, oldBlock) => {
+  // Solo actualizar si el ID del bloque cambió (significa que estamos editando un bloque diferente)
+  if (newBlock.id !== oldBlock?.id) {
+    localBlock.value = initializeBlock(newBlock)
+    if (descriptionEditor.value) {
+      descriptionEditor.value.commands.setContent(newBlock.description)
+    }
   }
-}, { deep: true })
+}, { deep: false })
 
 onMounted(() => {
   if (descriptionEditor.value) {
