@@ -22,7 +22,7 @@
     ];
     $gap = $gapMap[$block['gap'] ?? 'medium'] ?? '2rem';
 
-    // Function to extract YouTube video ID and create embed URL
+    // Function to extract video embed URLs
     function getYoutubeEmbedUrl($url) {
         if (!$url) return null;
 
@@ -44,7 +44,6 @@
         return $videoId ? "https://www.youtube.com/embed/{$videoId}?rel=0" : null;
     }
 
-    // Function to extract Vimeo video ID and create embed URL
     function getVimeoEmbedUrl($url) {
         if (!$url) return null;
 
@@ -344,7 +343,7 @@
         margin: auto;
     }
 
-
+    
 
     @media (max-width: 1024px) {
         .multi-column-videos {
