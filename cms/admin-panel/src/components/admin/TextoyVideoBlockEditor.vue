@@ -551,10 +551,10 @@
     <MediaPicker
       :show="showMediaPicker"
       :selected-media="selectedMedia"
-      :type-filter="'video'"
+      :type-filter="mediaPickerType === 'cover' ? 'image' : 'video'"
       :multiple="false"
       @close="closeMediaPicker"
-      @select="onVideoMediaSelected"
+      @select="onMediaSelected"
     />
   </div>
 </template>
@@ -583,13 +583,16 @@ const emit = defineEmits<Emits>()
 const activeTab = ref('general')
 
 // Media picker composable
-const { 
-  showMediaPicker, 
-  selectedMedia, 
-  openMediaPicker, 
-  closeMediaPicker, 
-  getFullMediaUrl 
+const {
+  showMediaPicker,
+  selectedMedia,
+  getFullMediaUrl
 } = useMediaPicker()
+
+// Cerrar media picker
+const closeMediaPicker = () => {
+  showMediaPicker.value = false
+}
 
 // Inicializar bloque con campos de atributos si no existen
 const initializeBlock = (block: TextoyVideoBlockType): TextoyVideoBlockType => {
@@ -655,11 +658,7 @@ const handleVideoTypeChange = () => {
 const openVideoMediaPicker = () => {
   currentColumnIndex.value = null // Asegurar que NO estamos en modo columna
   mediaPickerType.value = 'video' // Establecer tipo de selección
-  openMediaPicker({
-    typeFilter: 'video',
-    multiple: false,
-    onSelect: onMediaSelected
-  })
+  showMediaPicker.value = true
 }
 
 // Manejar selección de video desde medios (UNIFICADO para ambos modos)
@@ -697,24 +696,19 @@ const mediaPickerType = ref<'video' | 'cover'>('video')
 // Abrir selector de portada
 const openCoverMediaPicker = () => {
   mediaPickerType.value = 'cover'
-  openMediaPicker({
-    typeFilter: 'image',
-    multiple: false,
-    onSelect: onMediaSelected
-  })
+  showMediaPicker.value = true
 }
 
 // Manejar selección de medios (video o portada)
 const onMediaSelected = (media: any) => {
   if (mediaPickerType.value === 'cover') {
-    // Seleccionar portada
+    // Seleccionar portada (imagen)
     localBlock.value.videoCoverUrl = getFullMediaUrl(media)
+    closeMediaPicker()
   } else {
     // Seleccionar video (comportamiento original)
     onVideoMediaSelected(media)
-    return
   }
-  closeMediaPicker()
 }
 
 // Remover portada seleccionada
@@ -748,11 +742,7 @@ const currentColumnIndex = ref<number | null>(null)
 const openColumnMediaPicker = (index: number) => {
   currentColumnIndex.value = index
   mediaPickerType.value = 'video' // Establecer tipo de selección
-  openMediaPicker({
-    typeFilter: 'video',
-    multiple: false,
-    onSelect: onMediaSelected // Reutilizar la función unificada
-  })
+  showMediaPicker.value = true
 }
 
 // Remover video de una columna
