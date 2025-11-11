@@ -86,11 +86,14 @@
 
     // Normalizar iconos en contactInfo
     if (!empty($contactInfo) && is_array($contactInfo)) {
-        foreach ($contactInfo as &$contact) {
-            if (isset($contact['icon'])) {
-                $contact['icon'] = $normalizeIcon($contact['icon']);
-            }
+        $normalizedContactInfo = [];
+        foreach ($contactInfo as $contact) {
+            $normalizedContactInfo[] = [
+                ...$contact,
+                'icon' => isset($contact['icon']) ? $normalizeIcon($contact['icon']) : 'fas fa-info-circle'
+            ];
         }
+        $contactInfo = $normalizedContactInfo;
     }
 
     $socialLinks = $footerConfig['socialLinks'] ?? [
@@ -101,11 +104,14 @@
 
     // Normalizar iconos en socialLinks
     if (!empty($socialLinks) && is_array($socialLinks)) {
-        foreach ($socialLinks as &$social) {
-            if (isset($social['icon'])) {
-                $social['icon'] = $normalizeIcon($social['icon']);
-            }
+        $normalizedSocialLinks = [];
+        foreach ($socialLinks as $social) {
+            $normalizedSocialLinks[] = [
+                ...$social,
+                'icon' => isset($social['icon']) ? $normalizeIcon($social['icon']) : 'fas fa-info-circle'
+            ];
         }
+        $socialLinks = $normalizedSocialLinks;
     }
 @endphp
 
