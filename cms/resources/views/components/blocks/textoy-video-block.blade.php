@@ -22,7 +22,7 @@
     ];
     $gap = $gapMap[$block['gap'] ?? 'medium'] ?? '2rem';
 
-    // Function to extract YouTube video ID and create embed URL
+    // Function to extract video embed URLs
     function getYoutubeEmbedUrl($url) {
         if (!$url) return null;
 
@@ -44,7 +44,6 @@
         return $videoId ? "https://www.youtube.com/embed/{$videoId}?rel=0" : null;
     }
 
-    // Function to extract Vimeo video ID and create embed URL
     function getVimeoEmbedUrl($url) {
         if (!$url) return null;
 
@@ -162,7 +161,7 @@
                                     <div class="play-button"
                                          style="width: 80px; height: 80px; background: rgba(255, 255, 255, 0.9); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);">
                                         <i class="fas fa-play"
-                                           style="font-size: 32px; color: #007bff; margin-left: 6px;"></i>
+                                           style="font-size: 32px; color: #000000; margin-left: 6px;"></i>
                                     </div>
                                 </div>
                             @endif
@@ -181,7 +180,7 @@
                             $uniqueIdVimeo = 'video-' . uniqid();
                             // URL sin autoplay para el iframe inicial
                             $initialUrlVimeo = $hasCover && !$autoplay ? $embedUrl : $videoEmbedUrl;
-                            // URL con autoplay para cuando se hace click (SIN muted para tener audio)
+                            // URL con autoplay para cuando se hace click (SIN mute para tener audio)
                             $autoplayUrlVimeo = strpos($embedUrl, '?') !== false
                                 ? $embedUrl . '&autoplay=1'
                                 : $embedUrl . '?autoplay=1';
@@ -220,7 +219,7 @@
                              style="border-radius: 12px; overflow: hidden; box-shadow: 0 8px 24px rgba(0,0,0,0.15);">
                             <video
                                 controls
-                                @if($autoplay)autoplay@endif
+                                {{ $autoplay ? 'autoplay' : '' }}
                                 style="width: 100%; height: auto; display: block; aspect-ratio: {{ $aspectRatioCSS }}; object-fit: cover;">
                                 <source src="{{ $videoUrl }}" type="video/mp4">
                                 Tu navegador no soporta el elemento video.
@@ -246,12 +245,25 @@
                         $colVideoUrl = $column['videoUrl'] ?? '';
                         $colTitle = $column['title'] ?? '';
                         $colDescription = $column['description'] ?? '';
+                        $colAutoplay = $column['videoAutoplay'] ?? false;
+                        $colCoverUrl = $column['videoCoverUrl'] ?? '';
+                        $colHasCover = !empty($colCoverUrl);
 
                         $colEmbedUrl = null;
                         if ($colVideoType === 'youtube') {
                             $colEmbedUrl = getYoutubeEmbedUrl($colVideoUrl);
                         } elseif ($colVideoType === 'vimeo') {
                             $colEmbedUrl = getVimeoEmbedUrl($colVideoUrl);
+                        }
+
+                        // URL con autoplay si está habilitado
+                        $colVideoEmbedUrl = $colEmbedUrl;
+                        if ($colAutoplay && $colVideoEmbedUrl) {
+                            if (strpos($colVideoEmbedUrl, '?') !== false) {
+                                $colVideoEmbedUrl .= '&autoplay=1';
+                            } else {
+                                $colVideoEmbedUrl .= '?autoplay=1';
+                            }
                         }
                     @endphp
 
@@ -260,10 +272,37 @@
 
                         {{-- Video --}}
                         @if($colVideoType === 'youtube' && $colEmbedUrl)
-                            <div class="video-card-media"
-                                 style="width: 100%; aspect-ratio: {{ $aspectRatioCSS }}; overflow: hidden;">
+                            @php
+                                $colUniqueId = 'video-col-' . uniqid();
+                                // URL sin autoplay para el iframe inicial
+                                $colInitialUrl = $colHasCover && !$colAutoplay ? $colEmbedUrl : $colVideoEmbedUrl;
+                                // URL con autoplay para cuando se hace click
+                                $colAutoplayUrl = strpos($colEmbedUrl, '?') !== false
+                                    ? $colEmbedUrl . '&autoplay=1'
+                                    : $colEmbedUrl . '?autoplay=1';
+                            @endphp
+
+                            <div class="video-card-media video-embed-container" id="{{ $colUniqueId }}"
+                                 style="width: 100%; aspect-ratio: {{ $aspectRatioCSS }}; overflow: hidden; position: relative; background: #000;">
+
+                                @if($colHasCover && !$colAutoplay)
+                                    <div class="video-cover"
+                                         style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-image: url('{{ $colCoverUrl }}'); background-size: cover; background-position: center; z-index: 10; display: flex; align-items: center; justify-content: center; cursor: pointer;"
+                                         onclick="
+                                            this.style.display='none';
+                                            const iframe = document.querySelector('#{{ $colUniqueId }} iframe');
+                                            iframe.src = '{{ $colAutoplayUrl }}';
+                                         ">
+                                        <div class="play-button"
+                                             style="width: 60px; height: 60px; background: rgba(255, 255, 255, 0.9); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);">
+                                            <i class="fas fa-play"
+                                               style="font-size: 24px; color: #000000; margin-left: 4px;"></i>
+                                        </div>
+                                    </div>
+                                @endif
+
                                 <iframe
-                                    src="{{ $colEmbedUrl }}"
+                                    src="{{ $colInitialUrl }}"
                                     style="width: 100%; height: 100%; border: 0;"
                                     frameborder="0"
                                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -272,10 +311,37 @@
                                 </iframe>
                             </div>
                         @elseif($colVideoType === 'vimeo' && $colEmbedUrl)
-                            <div class="video-card-media"
-                                 style="width: 100%; aspect-ratio: {{ $aspectRatioCSS }}; overflow: hidden;">
+                            @php
+                                $colUniqueIdVimeo = 'video-col-' . uniqid();
+                                // URL sin autoplay para el iframe inicial
+                                $colInitialUrlVimeo = $colHasCover && !$colAutoplay ? $colEmbedUrl : $colVideoEmbedUrl;
+                                // URL con autoplay para cuando se hace click
+                                $colAutoplayUrlVimeo = strpos($colEmbedUrl, '?') !== false
+                                    ? $colEmbedUrl . '&autoplay=1'
+                                    : $colEmbedUrl . '?autoplay=1';
+                            @endphp
+
+                            <div class="video-card-media video-embed-container" id="{{ $colUniqueIdVimeo }}"
+                                 style="width: 100%; aspect-ratio: {{ $aspectRatioCSS }}; overflow: hidden; position: relative; background: #000;">
+
+                                @if($colHasCover && !$colAutoplay)
+                                    <div class="video-cover"
+                                         style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-image: url('{{ $colCoverUrl }}'); background-size: cover; background-position: center; z-index: 10; display: flex; align-items: center; justify-content: center; cursor: pointer;"
+                                         onclick="
+                                            this.style.display='none';
+                                            const iframe = document.querySelector('#{{ $colUniqueIdVimeo }} iframe');
+                                            iframe.src = '{{ $colAutoplayUrlVimeo }}';
+                                         ">
+                                        <div class="play-button"
+                                             style="width: 60px; height: 60px; background: rgba(255, 255, 255, 0.9); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);">
+                                            <i class="fas fa-play"
+                                               style="font-size: 24px; color: #000000; margin-left: 4px;"></i>
+                                        </div>
+                                    </div>
+                                @endif
+
                                 <iframe
-                                    src="{{ $colEmbedUrl }}"
+                                    src="{{ $colInitialUrlVimeo }}"
                                     style="width: 100%; height: 100%; border: 0;"
                                     frameborder="0"
                                     allow="autoplay; fullscreen; picture-in-picture"
@@ -288,6 +354,7 @@
                                  style="width: 100%; aspect-ratio: {{ $aspectRatioCSS }}; overflow: hidden;">
                                 <video
                                     controls
+                                    {{ $colAutoplay ? 'autoplay' : '' }}
                                     style="width: 100%; height: 100%; display: block; object-fit: cover;">
                                     <source src="{{ $colVideoUrl }}" type="video/mp4">
                                     Tu navegador no soporta el elemento video.
@@ -319,6 +386,10 @@
 </div>
 
 <style>
+    .fas.fa-play
+    {
+        color: #c0894f !important;
+    }
     .multi-column-videos {
         max-width: 1200px !important;
     }
@@ -344,7 +415,7 @@
         margin: auto;
     }
 
-
+    
 
     @media (max-width: 1024px) {
         .multi-column-videos {

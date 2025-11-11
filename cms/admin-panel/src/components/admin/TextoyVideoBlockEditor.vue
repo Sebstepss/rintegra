@@ -411,6 +411,43 @@
                     <small class="form-help">
                       {{ col.videoType === 'youtube' ? 'Soporta: youtube.com/watch?v=ID, youtu.be/ID, youtube.com/shorts/ID' : 'Ejemplo: vimeo.com/123456789' }}
                     </small>
+
+                    <!-- Autoplay para YouTube/Vimeo -->
+                    <div class="form-row" style="margin-top: 1rem;">
+                      <div class="form-group">
+                        <label class="checkbox-label">
+                          <input
+                            type="checkbox"
+                            v-model="col.videoAutoplay"
+                          >
+                          <span>Autoplay al cargar</span>
+                        </label>
+                      </div>
+                    </div>
+
+                    <!-- Portada personalizada para YouTube/Vimeo -->
+                    <div v-if="col.videoUrl" class="form-group" style="margin-top: 1rem;">
+                      <label>Portada personalizada</label>
+                      <div class="media-selector">
+                        <div v-if="col.videoCoverUrl" class="selected-media">
+                          <img :src="col.videoCoverUrl" class="media-preview" style="object-fit: cover;">
+                          <button @click="removeColumnCover(idx)" class="btn-remove" type="button">
+                            <i class="fas fa-times"></i>
+                          </button>
+                        </div>
+                        <div v-else class="media-placeholder">
+                          <i class="fas fa-image"></i>
+                          <p>No hay portada</p>
+                        </div>
+                        <button @click="openColumnCoverPicker(idx)" class="btn-media btn-small" type="button">
+                          <i class="fas fa-image"></i>
+                          Seleccionar portada
+                        </button>
+                      </div>
+                      <small class="form-help">
+                        La portada se mostrará hasta que el usuario haga click en play
+                      </small>
+                    </div>
                   </div>
 
                   <!-- Media Picker para Video Local -->
@@ -691,19 +728,34 @@ const removeSelectedVideo = () => {
 }
 
 // Estado para distinguir tipo de media picker
-const mediaPickerType = ref<'video' | 'cover'>('video')
+const mediaPickerType = ref<'video' | 'cover' | 'column-cover'>('video')
 
-// Abrir selector de portada
+// Abrir selector de portada (modo dos columnas)
 const openCoverMediaPicker = () => {
+  currentColumnIndex.value = null
   mediaPickerType.value = 'cover'
+  showMediaPicker.value = true
+}
+
+// Abrir selector de portada para columna específica
+const openColumnCoverPicker = (index: number) => {
+  currentColumnIndex.value = index
+  mediaPickerType.value = 'column-cover'
   showMediaPicker.value = true
 }
 
 // Manejar selección de medios (video o portada)
 const onMediaSelected = (media: any) => {
   if (mediaPickerType.value === 'cover') {
-    // Seleccionar portada (imagen)
+    // Seleccionar portada para modo dos columnas (imagen)
     localBlock.value.videoCoverUrl = getFullMediaUrl(media)
+    closeMediaPicker()
+  } else if (mediaPickerType.value === 'column-cover') {
+    // Seleccionar portada para columna específica
+    if (currentColumnIndex.value !== null && localBlock.value.columns) {
+      localBlock.value.columns[currentColumnIndex.value].videoCoverUrl = getFullMediaUrl(media)
+    }
+    currentColumnIndex.value = null
     closeMediaPicker()
   } else {
     // Seleccionar video (comportamiento original)
@@ -711,9 +763,16 @@ const onMediaSelected = (media: any) => {
   }
 }
 
-// Remover portada seleccionada
+// Remover portada seleccionada (modo dos columnas)
 const removeVideoCover = () => {
   localBlock.value.videoCoverUrl = ''
+}
+
+// Remover portada de una columna
+const removeColumnCover = (index: number) => {
+  if (localBlock.value.columns?.[index]) {
+    localBlock.value.columns[index].videoCoverUrl = ''
+  }
 }
 
 // Métodos para manejar columnas (múltiple layout)
@@ -723,7 +782,9 @@ const addColumn = () => {
     videoType: 'youtube' as const,
     videoUrl: '',
     title: '',
-    description: ''
+    description: '',
+    videoAutoplay: false,
+    videoCoverUrl: ''
   }
   localBlock.value.columns = localBlock.value.columns || []
   localBlock.value.columns.push(newColumn)
