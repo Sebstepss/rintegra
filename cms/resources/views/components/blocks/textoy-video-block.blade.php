@@ -137,13 +137,27 @@
                     @endphp
 
                     @if($videoType === 'youtube' && $embedUrl)
-                        <div class="video-embed-container"
+                        @php
+                            $uniqueId = 'video-' . uniqid();
+                            // URL sin autoplay para el iframe inicial
+                            $initialUrl = $hasCover && !$autoplay ? $embedUrl : $videoEmbedUrl;
+                            // URL con autoplay para cuando se hace click
+                            $autoplayUrl = strpos($embedUrl, '?') !== false
+                                ? $embedUrl . '&autoplay=1&mute=1'
+                                : $embedUrl . '?autoplay=1&mute=1';
+                        @endphp
+
+                        <div class="video-embed-container" id="{{ $uniqueId }}"
                              style="width: 100%; aspect-ratio: {{ $aspectRatioCSS }}; border-radius: 12px; overflow: hidden; box-shadow: 0 8px 24px rgba(0,0,0,0.15); position: relative; background: #000;">
 
                             @if($hasCover && !$autoplay)
                                 <div class="video-cover"
                                      style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-image: url('{{ $coverUrl }}'); background-size: cover; background-position: center; z-index: 10; display: flex; align-items: center; justify-content: center; cursor: pointer;"
-                                     onclick="this.style.display='none';">
+                                     onclick="
+                                        this.style.display='none';
+                                        const iframe = document.querySelector('#{{ $uniqueId }} iframe');
+                                        iframe.src = '{{ $autoplayUrl }}';
+                                     ">
                                     <div class="play-button"
                                          style="width: 80px; height: 80px; background: rgba(255, 255, 255, 0.9); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);">
                                         <i class="fas fa-play"
@@ -153,7 +167,7 @@
                             @endif
 
                             <iframe
-                                src="{{ $videoEmbedUrl }}"
+                                src="{{ $initialUrl }}"
                                 style="width: 100%; height: 100%; border: 0;"
                                 frameborder="0"
                                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -162,13 +176,27 @@
                             </iframe>
                         </div>
                     @elseif($videoType === 'vimeo' && $embedUrl)
-                        <div class="video-embed-container"
+                        @php
+                            $uniqueIdVimeo = 'video-' . uniqid();
+                            // URL sin autoplay para el iframe inicial
+                            $initialUrlVimeo = $hasCover && !$autoplay ? $embedUrl : $videoEmbedUrl;
+                            // URL con autoplay para cuando se hace click
+                            $autoplayUrlVimeo = strpos($embedUrl, '?') !== false
+                                ? $embedUrl . '&autoplay=1&muted=1'
+                                : $embedUrl . '?autoplay=1&muted=1';
+                        @endphp
+
+                        <div class="video-embed-container" id="{{ $uniqueIdVimeo }}"
                              style="width: 100%; aspect-ratio: {{ $aspectRatioCSS }}; border-radius: 12px; overflow: hidden; box-shadow: 0 8px 24px rgba(0,0,0,0.15); position: relative; background: #000;">
 
                             @if($hasCover && !$autoplay)
                                 <div class="video-cover"
                                      style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-image: url('{{ $coverUrl }}'); background-size: cover; background-position: center; z-index: 10; display: flex; align-items: center; justify-content: center; cursor: pointer;"
-                                     onclick="this.style.display='none';">
+                                     onclick="
+                                        this.style.display='none';
+                                        const iframe = document.querySelector('#{{ $uniqueIdVimeo }} iframe');
+                                        iframe.src = '{{ $autoplayUrlVimeo }}';
+                                     ">
                                     <div class="play-button"
                                          style="width: 80px; height: 80px; background: rgba(255, 255, 255, 0.9); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);">
                                         <i class="fas fa-play"
@@ -178,7 +206,7 @@
                             @endif
 
                             <iframe
-                                src="{{ $videoEmbedUrl }}"
+                                src="{{ $initialUrlVimeo }}"
                                 style="width: 100%; height: 100%; border: 0;"
                                 frameborder="0"
                                 allow="autoplay; fullscreen; picture-in-picture"
