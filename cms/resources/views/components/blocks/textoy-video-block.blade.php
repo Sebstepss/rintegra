@@ -126,12 +126,12 @@
                         $hasCover = !empty($coverUrl);
                         $videoEmbedUrl = $embedUrl;
 
-                        // Agregar parámetros de autoplay
+                        // Agregar parámetros de autoplay (SIN mute para tener audio)
                         if ($autoplay && $videoEmbedUrl) {
                             if (strpos($videoEmbedUrl, '?') !== false) {
-                                $videoEmbedUrl .= '&autoplay=1&mute=1';
+                                $videoEmbedUrl .= '&autoplay=1';
                             } else {
-                                $videoEmbedUrl .= '?autoplay=1&mute=1';
+                                $videoEmbedUrl .= '?autoplay=1';
                             }
                         }
                     @endphp
@@ -141,10 +141,10 @@
                             $uniqueId = 'video-' . uniqid();
                             // URL sin autoplay para el iframe inicial
                             $initialUrl = $hasCover && !$autoplay ? $embedUrl : $videoEmbedUrl;
-                            // URL con autoplay para cuando se hace click
+                            // URL con autoplay para cuando se hace click (SIN mute para tener audio)
                             $autoplayUrl = strpos($embedUrl, '?') !== false
-                                ? $embedUrl . '&autoplay=1&mute=1'
-                                : $embedUrl . '?autoplay=1&mute=1';
+                                ? $embedUrl . '&autoplay=1'
+                                : $embedUrl . '?autoplay=1';
                         @endphp
 
                         <div class="video-embed-container" id="{{ $uniqueId }}"
@@ -180,10 +180,10 @@
                             $uniqueIdVimeo = 'video-' . uniqid();
                             // URL sin autoplay para el iframe inicial
                             $initialUrlVimeo = $hasCover && !$autoplay ? $embedUrl : $videoEmbedUrl;
-                            // URL con autoplay para cuando se hace click
+                            // URL con autoplay para cuando se hace click (SIN muted para tener audio)
                             $autoplayUrlVimeo = strpos($embedUrl, '?') !== false
-                                ? $embedUrl . '&autoplay=1&muted=1'
-                                : $embedUrl . '?autoplay=1&muted=1';
+                                ? $embedUrl . '&autoplay=1'
+                                : $embedUrl . '?autoplay=1';
                         @endphp
 
                         <div class="video-embed-container" id="{{ $uniqueIdVimeo }}"
@@ -219,7 +219,7 @@
                              style="border-radius: 12px; overflow: hidden; box-shadow: 0 8px 24px rgba(0,0,0,0.15);">
                             <video
                                 controls
-                                @if($autoplay)autoplay muted @endif
+                                @if($autoplay)autoplay@endif
                                 style="width: 100%; height: auto; display: block; aspect-ratio: {{ $aspectRatioCSS }}; object-fit: cover;">
                                 <source src="{{ $videoUrl }}" type="video/mp4">
                                 Tu navegador no soporta el elemento video.
