@@ -654,10 +654,11 @@ const handleVideoTypeChange = () => {
 // Abrir selector de video (modo dos columnas)
 const openVideoMediaPicker = () => {
   currentColumnIndex.value = null // Asegurar que NO estamos en modo columna
+  mediaPickerType.value = 'video' // Establecer tipo de selección
   openMediaPicker({
     typeFilter: 'video',
     multiple: false,
-    onSelect: onVideoMediaSelected
+    onSelect: onMediaSelected
   })
 }
 
@@ -690,23 +691,29 @@ const removeSelectedVideo = () => {
   localBlock.value.videoMediaId = undefined
 }
 
-// Estado para manejar el MediaPicker de portada
-const coverMediaPickerActive = ref(false)
+// Estado para distinguir tipo de media picker
+const mediaPickerType = ref<'video' | 'cover'>('video')
 
 // Abrir selector de portada
 const openCoverMediaPicker = () => {
-  coverMediaPickerActive.value = true
+  mediaPickerType.value = 'cover'
   openMediaPicker({
     typeFilter: 'image',
     multiple: false,
-    onSelect: onCoverMediaSelected
+    onSelect: onMediaSelected
   })
 }
 
-// Manejar selección de portada
-const onCoverMediaSelected = (media: any) => {
-  localBlock.value.videoCoverUrl = getFullMediaUrl(media)
-  coverMediaPickerActive.value = false
+// Manejar selección de medios (video o portada)
+const onMediaSelected = (media: any) => {
+  if (mediaPickerType.value === 'cover') {
+    // Seleccionar portada
+    localBlock.value.videoCoverUrl = getFullMediaUrl(media)
+  } else {
+    // Seleccionar video (comportamiento original)
+    onVideoMediaSelected(media)
+    return
+  }
   closeMediaPicker()
 }
 
@@ -740,10 +747,11 @@ const currentColumnIndex = ref<number | null>(null)
 // Abrir MediaPicker para una columna específica
 const openColumnMediaPicker = (index: number) => {
   currentColumnIndex.value = index
+  mediaPickerType.value = 'video' // Establecer tipo de selección
   openMediaPicker({
     typeFilter: 'video',
     multiple: false,
-    onSelect: onVideoMediaSelected // Reutilizar la función unificada
+    onSelect: onMediaSelected // Reutilizar la función unificada
   })
 }
 
