@@ -120,13 +120,40 @@
                         } elseif ($videoType === 'vimeo') {
                             $embedUrl = getVimeoEmbedUrl($videoUrl);
                         }
+
+                        $autoplay = $block['videoAutoplay'] ?? false;
+                        $coverUrl = $block['videoCoverUrl'] ?? '';
+                        $hasCover = !empty($coverUrl);
+                        $videoEmbedUrl = $embedUrl;
+
+                        // Agregar parámetros de autoplay
+                        if ($autoplay && $videoEmbedUrl) {
+                            if (strpos($videoEmbedUrl, '?') !== false) {
+                                $videoEmbedUrl .= '&autoplay=1&mute=1';
+                            } else {
+                                $videoEmbedUrl .= '?autoplay=1&mute=1';
+                            }
+                        }
                     @endphp
 
                     @if($videoType === 'youtube' && $embedUrl)
-                        <div class="video-embed"
-                             style="width: 100%; aspect-ratio: {{ $aspectRatioCSS }}; border-radius: 12px; overflow: hidden; box-shadow: 0 8px 24px rgba(0,0,0,0.15);">
+                        <div class="video-embed-container"
+                             style="width: 100%; aspect-ratio: {{ $aspectRatioCSS }}; border-radius: 12px; overflow: hidden; box-shadow: 0 8px 24px rgba(0,0,0,0.15); position: relative; background: #000;">
+
+                            @if($hasCover && !$autoplay)
+                                <div class="video-cover"
+                                     style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-image: url('{{ $coverUrl }}'); background-size: cover; background-position: center; z-index: 10; display: flex; align-items: center; justify-content: center; cursor: pointer;"
+                                     onclick="this.style.display='none';">
+                                    <div class="play-button"
+                                         style="width: 80px; height: 80px; background: rgba(255, 255, 255, 0.9); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);">
+                                        <i class="fas fa-play"
+                                           style="font-size: 32px; color: #007bff; margin-left: 6px;"></i>
+                                    </div>
+                                </div>
+                            @endif
+
                             <iframe
-                                src="{{ $embedUrl }}"
+                                src="{{ $videoEmbedUrl }}"
                                 style="width: 100%; height: 100%; border: 0;"
                                 frameborder="0"
                                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -135,10 +162,23 @@
                             </iframe>
                         </div>
                     @elseif($videoType === 'vimeo' && $embedUrl)
-                        <div class="video-embed"
-                             style="width: 100%; aspect-ratio: {{ $aspectRatioCSS }}; border-radius: 12px; overflow: hidden; box-shadow: 0 8px 24px rgba(0,0,0,0.15);">
+                        <div class="video-embed-container"
+                             style="width: 100%; aspect-ratio: {{ $aspectRatioCSS }}; border-radius: 12px; overflow: hidden; box-shadow: 0 8px 24px rgba(0,0,0,0.15); position: relative; background: #000;">
+
+                            @if($hasCover && !$autoplay)
+                                <div class="video-cover"
+                                     style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-image: url('{{ $coverUrl }}'); background-size: cover; background-position: center; z-index: 10; display: flex; align-items: center; justify-content: center; cursor: pointer;"
+                                     onclick="this.style.display='none';">
+                                    <div class="play-button"
+                                         style="width: 80px; height: 80px; background: rgba(255, 255, 255, 0.9); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);">
+                                        <i class="fas fa-play"
+                                           style="font-size: 32px; color: #007bff; margin-left: 6px;"></i>
+                                    </div>
+                                </div>
+                            @endif
+
                             <iframe
-                                src="{{ $embedUrl }}"
+                                src="{{ $videoEmbedUrl }}"
                                 style="width: 100%; height: 100%; border: 0;"
                                 frameborder="0"
                                 allow="autoplay; fullscreen; picture-in-picture"
@@ -151,6 +191,7 @@
                              style="border-radius: 12px; overflow: hidden; box-shadow: 0 8px 24px rgba(0,0,0,0.15);">
                             <video
                                 controls
+                                @if($autoplay)autoplay muted @endif
                                 style="width: 100%; height: auto; display: block; aspect-ratio: {{ $aspectRatioCSS }}; object-fit: cover;">
                                 <source src="{{ $videoUrl }}" type="video/mp4">
                                 Tu navegador no soporta el elemento video.

@@ -265,6 +265,18 @@
               <small class="form-help">
                 Soporta: youtube.com/watch?v=ID, youtu.be/ID, youtube.com/shorts/ID, o solo el ID
               </small>
+
+              <div class="form-row" style="margin-top: 1rem;">
+                <div class="form-group">
+                  <label class="checkbox-label">
+                    <input
+                      type="checkbox"
+                      v-model="localBlock.videoAutoplay"
+                    >
+                    <span>Autoplay al cargar</span>
+                  </label>
+                </div>
+              </div>
             </div>
 
             <!-- Vimeo Video -->
@@ -279,6 +291,42 @@
               >
               <small class="form-help">
                 Puedes usar: vimeo.com/ID o solo el ID del video
+              </small>
+
+              <div class="form-row" style="margin-top: 1rem;">
+                <div class="form-group">
+                  <label class="checkbox-label">
+                    <input
+                      type="checkbox"
+                      v-model="localBlock.videoAutoplay"
+                    >
+                    <span>Autoplay al cargar</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <!-- Cover Image for YouTube/Vimeo -->
+            <div v-if="(localBlock.videoType === 'youtube' || localBlock.videoType === 'vimeo') && localBlock.videoUrl" class="form-group">
+              <label>Portada personalizada</label>
+              <div class="media-selector">
+                <div v-if="localBlock.videoCoverUrl" class="selected-media">
+                  <img :src="localBlock.videoCoverUrl" class="media-preview" style="object-fit: cover;">
+                  <button @click="removeVideoCover" class="btn-remove" type="button">
+                    <i class="fas fa-times"></i>
+                  </button>
+                </div>
+                <div v-else class="media-placeholder">
+                  <i class="fas fa-image"></i>
+                  <p>No hay portada seleccionada</p>
+                </div>
+                <button @click="openCoverMediaPicker" class="btn-media" type="button">
+                  <i class="fas fa-image"></i>
+                  Seleccionar portada
+                </button>
+              </div>
+              <small class="form-help">
+                La portada se mostrará hasta que el usuario haga click en el botón play
               </small>
             </div>
 
@@ -563,6 +611,8 @@ const initializeBlock = (block: TextoyVideoBlockType): TextoyVideoBlockType => {
     buttonTextColor: block.buttonTextColor || '#ffffff',
     videoType: block.videoType || 'youtube',
     videoUrl: block.videoUrl || '',
+    videoAutoplay: block.videoAutoplay ?? false,
+    videoCoverUrl: block.videoCoverUrl || '',
     backgroundColor: block.backgroundColor || '#ffffff',
     customId: block.customId || '',
     customClass: block.customClass || '',
@@ -638,6 +688,31 @@ const onVideoMediaSelected = (media: any) => {
 const removeSelectedVideo = () => {
   localBlock.value.videoUrl = ''
   localBlock.value.videoMediaId = undefined
+}
+
+// Estado para manejar el MediaPicker de portada
+const coverMediaPickerActive = ref(false)
+
+// Abrir selector de portada
+const openCoverMediaPicker = () => {
+  coverMediaPickerActive.value = true
+  openMediaPicker({
+    typeFilter: 'image',
+    multiple: false,
+    onSelect: onCoverMediaSelected
+  })
+}
+
+// Manejar selección de portada
+const onCoverMediaSelected = (media: any) => {
+  localBlock.value.videoCoverUrl = getFullMediaUrl(media)
+  coverMediaPickerActive.value = false
+  closeMediaPicker()
+}
+
+// Remover portada seleccionada
+const removeVideoCover = () => {
+  localBlock.value.videoCoverUrl = ''
 }
 
 // Métodos para manejar columnas (múltiple layout)
@@ -1208,5 +1283,27 @@ onBeforeUnmount(() => {
 
 .column-item .form-group:last-child {
   margin-bottom: 0;
+}
+
+/* Checkbox styles */
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  font-weight: normal;
+  margin: 0;
+}
+
+.checkbox-label input[type="checkbox"] {
+  margin: 0;
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  accent-color: #007bff;
+}
+
+.checkbox-label span {
+  user-select: none;
 }
 </style>

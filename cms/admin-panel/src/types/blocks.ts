@@ -164,6 +164,8 @@ export interface TextoyVideoBlock extends BaseBlock {
   videoType: 'media' | 'youtube' | 'vimeo'
   videoUrl: string
   videoMediaId?: number
+  videoAutoplay?: boolean
+  videoCoverUrl?: string
 
   // Layout múltiples columnas
   columnsCount: 1 | 2 | 3 | 4

@@ -115,6 +115,8 @@ export function useBlockTemplates() {
         buttonTextColor: '#ffffff',
         videoType: 'youtube',
         videoUrl: '',
+        videoAutoplay: false,
+        videoCoverUrl: '',
         backgroundColor: '#ffffff',
         columnsCount: 2,
         gap: 'medium',
