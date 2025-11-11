@@ -446,6 +446,68 @@ const updateSocialName = (index) => {
   footerConfig.value.socialLinks[index].name = iconToName[icon] || 'Red Social'
 }
 
+// Mapeo de iconos a sus prefijos de FontAwesome
+const iconPrefixMap = {
+  // Brand Icons (fab)
+  'instagram': 'fab',
+  'facebook-f': 'fab',
+  'facebook': 'fab',
+  'linkedin-in': 'fab',
+  'linkedin': 'fab',
+  'twitter': 'fab',
+  'whatsapp': 'fab',
+  'github': 'fab',
+  'youtube': 'fab',
+  'tiktok': 'fab',
+
+  // Solid Icons (fas)
+  'envelope': 'fas',
+  'phone': 'fas',
+  'map-marker-alt': 'fas',
+  'map-marker': 'fas',
+  'location': 'fas',
+  'clock': 'fas',
+  'home': 'fas',
+  'building': 'fas',
+  'globe': 'fas',
+  'link': 'fas',
+  'mobile': 'fas',
+  'mobile-alt': 'fas',
+  'fax': 'fas',
+  'print': 'fas',
+  'info-circle': 'fas',
+  'question-circle': 'fas'
+}
+
+// Función para convertir iconos al formato FontAwesome completo
+const getFullIconClass = (iconName) => {
+  const prefix = iconPrefixMap[iconName] || 'fas'
+  return `${prefix} fa-${iconName}`
+}
+
+// Función para transformar toda la configuración de iconos
+const transformIconsForSave = (config) => {
+  const transformed = { ...config }
+
+  // Transformar contactInfo icons
+  if (transformed.contactInfo && Array.isArray(transformed.contactInfo)) {
+    transformed.contactInfo = transformed.contactInfo.map(item => ({
+      ...item,
+      icon: getFullIconClass(item.icon)
+    }))
+  }
+
+  // Transformar socialLinks icons
+  if (transformed.socialLinks && Array.isArray(transformed.socialLinks)) {
+    transformed.socialLinks = transformed.socialLinks.map(item => ({
+      ...item,
+      icon: getFullIconClass(item.icon)
+    }))
+  }
+
+  return transformed
+}
+
 const previewChanges = () => {
   const configToPreview = {
     ...footerConfig.value,
@@ -460,18 +522,18 @@ const previewChanges = () => {
 const saveConfig = async () => {
   saving.value = true
   try {
-    const configToSave = {
+    const configToSave = transformIconsForSave({
       ...footerConfig.value,
       ctaDescription: ctaEditor.value?.getHTML() || footerConfig.value.ctaDescription
-    }
-    
+    })
+
     // Guardar solo en backend API
     await configsApi.save('footer', configToSave, 'Configuración del footer actualizada')
-    
-    window.dispatchEvent(new CustomEvent('footerConfigChanged', { 
-      detail: configToSave 
+
+    window.dispatchEvent(new CustomEvent('footerConfigChanged', {
+      detail: configToSave
     }))
-    
+
     alert('Configuración del footer guardada exitosamente')
   } catch (error) {
     console.error('Error al guardar la configuración del footer:', error)

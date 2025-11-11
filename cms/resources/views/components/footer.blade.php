@@ -31,17 +31,82 @@
         'submitButton' => 'Enviar'
     ];
 
+    // Función para normalizar iconos al formato FontAwesome completo
+    $normalizeIcon = function($icon) {
+        if (empty($icon)) return 'fas fa-info-circle';
+
+        // Si ya tiene el formato completo (ej: "fas fa-envelope"), devolver como está
+        if (strpos($icon, ' ') !== false) {
+            return $icon;
+        }
+
+        // Mapeo de nombres cortos a prefijos FontAwesome
+        $iconPrefixMap = [
+            // Brand Icons (fab)
+            'instagram' => 'fab',
+            'facebook-f' => 'fab',
+            'facebook' => 'fab',
+            'linkedin-in' => 'fab',
+            'linkedin' => 'fab',
+            'twitter' => 'fab',
+            'whatsapp' => 'fab',
+            'github' => 'fab',
+            'youtube' => 'fab',
+            'tiktok' => 'fab',
+
+            // Solid Icons (fas) - default
+            'envelope' => 'fas',
+            'phone' => 'fas',
+            'map-marker-alt' => 'fas',
+            'map-marker' => 'fas',
+            'location' => 'fas',
+            'clock' => 'fas',
+            'home' => 'fas',
+            'building' => 'fas',
+            'globe' => 'fas',
+            'link' => 'fas',
+            'mobile' => 'fas',
+            'mobile-alt' => 'fas',
+            'fax' => 'fas',
+            'print' => 'fas',
+            'info-circle' => 'fas',
+            'question-circle' => 'fas'
+        ];
+
+        // Si es un nombre corto, convertir a formato completo
+        $prefix = $iconPrefixMap[$icon] ?? 'fas';
+        return "{$prefix} fa-{$icon}";
+    };
+
     $contactInfo = $footerConfig['contactInfo'] ?? [
         ['icon' => 'fas fa-map-marker-alt', 'text' => 'Cra 14 #18-50, Cali, Valle del Cauca'],
         ['icon' => 'fas fa-phone', 'text' => '+57 320 8994424'],
         ['icon' => 'fas fa-envelope', 'text' => 'contacto@r-integra.com']
     ];
 
+    // Normalizar iconos en contactInfo
+    if (!empty($contactInfo) && is_array($contactInfo)) {
+        foreach ($contactInfo as &$contact) {
+            if (isset($contact['icon'])) {
+                $contact['icon'] = $normalizeIcon($contact['icon']);
+            }
+        }
+    }
+
     $socialLinks = $footerConfig['socialLinks'] ?? [
         ['name' => 'Instagram', 'icon' => 'fab fa-instagram', 'url' => '#'],
         ['name' => 'Facebook', 'icon' => 'fab fa-facebook-f', 'url' => '#'],
         ['name' => 'LinkedIn', 'icon' => 'fab fa-linkedin-in', 'url' => '#']
     ];
+
+    // Normalizar iconos en socialLinks
+    if (!empty($socialLinks) && is_array($socialLinks)) {
+        foreach ($socialLinks as &$social) {
+            if (isset($social['icon'])) {
+                $social['icon'] = $normalizeIcon($social['icon']);
+            }
+        }
+    }
 @endphp
 
 <footer class="footer" style="background-color: {{ $backgroundColor }}; color: white;">
