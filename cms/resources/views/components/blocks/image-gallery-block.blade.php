@@ -24,18 +24,20 @@
     $aspectValue = $aspectMap[$aspectRatio] ?? '1 / 1';
 
     // Helper para construir URL de medios
-    function buildMediaUrl($src) {
-        if (empty($src)) return '';
-        // Si ya es una URL completa, retornarla
-        if (str_starts_with($src, 'http://') || str_starts_with($src, 'https://') || str_starts_with($src, 'data:')) {
-            return $src;
+    if (!function_exists('buildMediaUrl')) {
+        function buildMediaUrl($src) {
+            if (empty($src)) return '';
+            // Si ya es una URL completa, retornarla
+            if (str_starts_with($src, 'http://') || str_starts_with($src, 'https://') || str_starts_with($src, 'data:')) {
+                return $src;
+            }
+            // Si comienza con /, es ruta absoluta del servidor
+            if (str_starts_with($src, '/')) {
+                return url($src);
+            }
+            // Asumimos que está en storage/uploads
+            return url('/storage/' . ltrim($src, '/'));
         }
-        // Si comienza con /, es ruta absoluta del servidor
-        if (str_starts_with($src, '/')) {
-            return url($src);
-        }
-        // Asumimos que está en storage/uploads
-        return url('/storage/' . ltrim($src, '/'));
     }
 @endphp
 
