@@ -594,8 +594,8 @@ document.getElementById('contactForm')?.addEventListener('submit', async functio
         const formData = new FormData(form);
         const data = Object.fromEntries(formData);
 
-        // Use secure_url() if HTTPS is detected, otherwise use url()
-        const apiUrl = '{{ request()->secure() ? secure_url("/api/forms/submit") : url("/api/forms/submit") }}';
+        // Build API URL dynamically based on current protocol
+        const apiUrl = window.location.protocol + '//' + window.location.host + '/api/forms/submit';
 
         const response = await fetch(apiUrl, {
             method: 'POST',

@@ -790,8 +790,8 @@ function showNotification{{ $jsBlockId }}(message, type = 'success') {
         const phoneNumber = data.phone || '';
 
         try {
-            // Use secure_url() if HTTPS is detected, otherwise use url()
-            const apiUrl = '{{ request()->secure() ? secure_url("/api/forms/submit") : url("/api/forms/submit") }}';
+            // Build API URL dynamically based on current protocol
+            const apiUrl = window.location.protocol + '//' + window.location.host + '/api/forms/submit';
 
             const response = await fetch(apiUrl, {
                 method: 'POST',
