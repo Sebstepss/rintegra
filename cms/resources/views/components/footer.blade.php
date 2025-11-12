@@ -594,8 +594,8 @@ document.getElementById('contactForm')?.addEventListener('submit', async functio
         const formData = new FormData(form);
         const data = Object.fromEntries(formData);
 
-        // Use window.location.origin to build the correct URL for both local and production
-        const apiUrl = `${window.location.origin}/api/forms/submit`;
+        // Use Laravel's url() helper to generate the correct URL for both local and production
+        const apiUrl = '{{ url("/api/forms/submit") }}';
 
         const response = await fetch(apiUrl, {
             method: 'POST',
