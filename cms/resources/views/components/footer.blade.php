@@ -568,7 +568,7 @@ document.getElementById('contactForm')?.addEventListener('submit', async functio
         const formData = new FormData(form);
         const data = Object.fromEntries(formData);
 
-        const response = await fetch('{{ url("/api/forms/submit") }}', {
+        const response = await fetch('/api/forms/submit', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

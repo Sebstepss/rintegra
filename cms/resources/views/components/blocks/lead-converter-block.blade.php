@@ -760,7 +760,7 @@
         const phoneNumber = data.phone || '';
 
         try {
-            const response = await fetch('{{ url("/api/forms/submit") }}', {
+            const response = await fetch('/api/forms/submit', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
