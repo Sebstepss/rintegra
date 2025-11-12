@@ -594,8 +594,8 @@ document.getElementById('contactForm')?.addEventListener('submit', async functio
         const formData = new FormData(form);
         const data = Object.fromEntries(formData);
 
-        // Use Laravel's url() helper to generate the correct URL for both local and production
-        const apiUrl = '{{ url("/api/forms/submit") }}';
+        // Use secure_url() if HTTPS is detected, otherwise use url()
+        const apiUrl = '{{ request()->secure() ? secure_url("/api/forms/submit") : url("/api/forms/submit") }}';
 
         const response = await fetch(apiUrl, {
             method: 'POST',
