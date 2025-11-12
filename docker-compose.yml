@@ -35,7 +35,11 @@ services:
     ports:
       - "${PORT:-80}:80"
     volumes:
+      # Application storage (logs, cache, sessions)
       - ./cms/storage:/var/www/cms/storage
+      # Persistent media uploads (critical - do not delete on redeploy)
+      - storage_media:/var/www/cms/storage/app/public
+      # Public uploads directory
       - ./cms/public/uploads:/var/www/cms/public/uploads
     networks:
       - coolify
@@ -51,3 +55,12 @@ services:
 networks:
   coolify:
     external: true
+
+# Named volume for persistent media storage
+volumes:
+  storage_media:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./cms/storage/app/public
