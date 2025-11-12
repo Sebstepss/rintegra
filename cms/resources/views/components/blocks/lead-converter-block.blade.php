@@ -248,7 +248,11 @@
 </div>
 
 <style>
-.lead-converter-block {
+    .lead-form .form-input {
+        color: #000 !important;
+    }
+    
+    .lead-converter-block {
     width: 100%;
     max-width: 100%;
     margin: 0 auto;
@@ -728,6 +732,32 @@
 })();
 @endif
 
+// Notification helper function for {{ $jsBlockId }}
+function showNotification{{ $jsBlockId }}(message, type = 'success') {
+    if (typeof Toastify !== 'undefined') {
+        Toastify({
+            text: message,
+            duration: 5000,
+            gravity: "top",
+            position: "right",
+            stopOnFocus: true,
+            style: {
+                background: type === 'success'
+                    ? "linear-gradient(135deg, #0c6a44, #0a5a39)"
+                    : "linear-gradient(135deg, #dc3545, #c82333)",
+                borderRadius: "8px",
+                padding: "16px 24px",
+                fontSize: "15px",
+                fontWeight: "500",
+                boxShadow: "0 4px 12px rgba(0,0,0,0.15)"
+            },
+        }).showToast();
+    } else {
+        // Fallback to alert if Toastify is not loaded
+        alert(message);
+    }
+}
+
 // Form submission for {{ $jsBlockId }}
 (function() {
     const form = document.getElementById('leadForm{{ $jsBlockId }}');
@@ -783,8 +813,8 @@
 
             const result = await response.json();
 
-            if (response.ok) {
-                alert('¡Formulario enviado exitosamente! Te contactaremos pronto.');
+            if (response.ok && result.success) {
+                showNotification{{ $jsBlockId }}('✅ ¡Formulario enviado exitosamente! Te contactaremos pronto.', 'success');
                 form.reset();
             } else {
                 if (result.errors) {
@@ -798,13 +828,16 @@
                             inputEl.classList.add('error');
                         }
                     }
+                    showNotification{{ $jsBlockId }}('❌ Por favor corrige los errores en el formulario.', 'error');
                 } else {
-                    alert('Error al enviar el formulario. Intenta nuevamente.');
+                    const errorMsg = result.message || 'Error al enviar el formulario. Intenta nuevamente.';
+                    showNotification{{ $jsBlockId }}('❌ ' + errorMsg, 'error');
+                    console.error('Server error:', result);
                 }
             }
         } catch (error) {
-            console.error('Error submitting form:', error);
-            alert('Error al enviar el formulario. Intenta nuevamente.');
+            console.error('Network error:', error);
+            showNotification{{ $jsBlockId }}('❌ Error de conexión. Por favor verifica tu conexión a internet e inténtalo nuevamente.', 'error');
         } finally {
             submitButton.disabled = false;
             submitButton.textContent = originalText;

@@ -42,6 +42,9 @@
     <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
+    <!-- Toastify CSS for notifications -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+
     {{-- Estilos Globales del Sitio --}}
     @include('components.global-styles')
 
@@ -82,6 +85,9 @@
     </main>
 
     @include('components.footer')
+
+    <!-- Toastify JS for notifications -->
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 
     @stack('scripts')
 </body>

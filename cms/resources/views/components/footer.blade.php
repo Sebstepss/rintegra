@@ -553,6 +553,32 @@
 </style>
 
 <script>
+// Notification helper function
+function showNotification(message, type = 'success') {
+    if (typeof Toastify !== 'undefined') {
+        Toastify({
+            text: message,
+            duration: 5000,
+            gravity: "top",
+            position: "right",
+            stopOnFocus: true,
+            style: {
+                background: type === 'success'
+                    ? "linear-gradient(135deg, #0c6a44, #0a5a39)"
+                    : "linear-gradient(135deg, #dc3545, #c82333)",
+                borderRadius: "8px",
+                padding: "16px 24px",
+                fontSize: "15px",
+                fontWeight: "500",
+                boxShadow: "0 4px 12px rgba(0,0,0,0.15)"
+            },
+        }).showToast();
+    } else {
+        // Fallback to alert if Toastify is not loaded
+        alert(message);
+    }
+}
+
 // Handle form submission
 document.getElementById('contactForm')?.addEventListener('submit', async function(e) {
     e.preventDefault();
@@ -572,7 +598,8 @@ document.getElementById('contactForm')?.addEventListener('submit', async functio
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Accept': 'application/json'
+                'Accept': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
             },
             body: JSON.stringify({
                 form_type: 'contact',
@@ -587,15 +614,19 @@ document.getElementById('contactForm')?.addEventListener('submit', async functio
             })
         });
 
-        if (response.ok) {
-            alert('Mensaje enviado correctamente. Te contactaremos pronto.');
+        const result = await response.json();
+
+        if (response.ok && result.success) {
+            showNotification('✅ Mensaje enviado correctamente. Te contactaremos pronto.', 'success');
             form.reset();
         } else {
-            alert('Error al enviar el mensaje. Inténtalo nuevamente.');
+            const errorMsg = result.message || 'Error al enviar el mensaje. Inténtalo nuevamente.';
+            showNotification('❌ ' + errorMsg, 'error');
+            console.error('Server error:', result);
         }
     } catch (error) {
-        console.error('Error:', error);
-        alert('Error al enviar el mensaje. Inténtalo nuevamente.');
+        console.error('Network error:', error);
+        showNotification('❌ Error de conexión. Por favor verifica tu conexión a internet e inténtalo nuevamente.', 'error');
     } finally {
         submitBtn.disabled = false;
         submitBtn.textContent = originalText;
