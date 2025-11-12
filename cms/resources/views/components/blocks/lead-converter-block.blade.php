@@ -790,7 +790,10 @@ function showNotification{{ $jsBlockId }}(message, type = 'success') {
         const phoneNumber = data.phone || '';
 
         try {
-            const response = await fetch('/api/forms/submit', {
+            // Use window.location.origin to build the correct URL for both local and production
+            const apiUrl = `${window.location.origin}/api/forms/submit`;
+
+            const response = await fetch(apiUrl, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
